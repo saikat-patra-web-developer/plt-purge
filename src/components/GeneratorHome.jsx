@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import CncExportModal from './CncExportModal';
 
 export function GeneratorHome() {
   const initialRows = [
@@ -12,8 +13,7 @@ export function GeneratorHome() {
 
   const [rows, setRows] = useState(initialRows);
   const [selectedRowId, setSelectedRowId] = useState(1);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [downloadNotice, setDownloadNotice] = useState(null);
+  const [isExportOpen, setIsExportOpen] = useState(false);
   const [maxBedDrop, setMaxBedDrop] = useState(3000);
   const [maxBedWidth, setMaxBedWidth] = useState(3000);
   const nextWindowNumber = useRef(2);
@@ -45,7 +45,6 @@ export function GeneratorHome() {
       ]);
       nextWindowNumber.current = 2;
       setSelectedRowId(1);
-      setDownloadNotice(null);
     }
   };
 
@@ -67,61 +66,15 @@ export function GeneratorHome() {
     }
   };
 
-  // Generate PLT file for the entire batch
-  const handleGenerateBatchPLT = () => {
+  const handleOpenExport = () => {
     const bedDrop = Number(maxBedDrop);
     const bedWidth = Number(maxBedWidth);
-    const invalidWindow = rows.find((row) => {
-      const width = Number(row.width);
-      const drop = Number(row.drop);
-      return !Number.isFinite(width) || !Number.isFinite(drop) || width <= 0 || drop <= 0 || width > bedWidth || drop > bedDrop;
-    });
 
     if (!Number.isFinite(bedDrop) || !Number.isFinite(bedWidth) || bedDrop <= 0 || bedWidth <= 0) {
-      window.alert('Enter valid maximum bed dimensions before generating the PLT file.');
+      window.alert('Enter valid maximum bed dimensions before opening the cutting workspace.');
       return;
     }
-
-    if (invalidWindow) {
-      window.alert(`${invalidWindow.location} must be within the ${bedDrop} mm drop and ${bedWidth} mm width bed limits.`);
-      return;
-    }
-
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-
-      // Construct standard HPGL/PLT syntax
-      let pltContent = 'IN;SP1;IP;VS20;\n';
-      let offsetX = 100;
-
-      rows.forEach((r) => {
-        const w = (Number(r.width) || 1000) * 10;
-        const h = (Number(r.drop) || 1200) * 10;
-
-        pltContent += `PA${offsetX},100;PD;PR${w},0;PR0,${h};PR-${w},0;PR0,-${h};PU;\n`;
-        offsetX += w + 200;
-      });
-
-      pltContent += '\nPU;PA0,0;SP0;\n';
-
-      const blob = new Blob([pltContent], { type: 'application/octet-stream' });
-      const url = URL.createObjectURL(blob);
-      const filename = `PURGE_BATCH_${rows.length}_BLINDS_${new Date().toISOString().slice(0, 10)}.plt`;
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(url);
-
-      setDownloadNotice({
-        filename,
-        count: rows.length,
-        size: `${(pltContent.length / 1024).toFixed(1)} KB`,
-        timestamp: new Date().toLocaleTimeString()
-      });
-    }, 600);
+    setIsExportOpen(true);
   };
 
   const selectedWindow = rows.find(r => r.id === selectedRowId) || rows[0];
@@ -211,34 +164,6 @@ export function GeneratorHome() {
             </div>
           </div>
         </div>
-
-        {/* Download Notice Banner */}
-        {downloadNotice && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </div>
-              <div>
-                <span className="text-sm font-bold text-green-900 block">
-                  Batch PLT Generated: {downloadNotice.filename}
-                </span>
-                <span className="text-xs text-green-700">
-                  {downloadNotice.count} blind layouts compiled • {downloadNotice.size} • Generated at {downloadNotice.timestamp}
-                </span>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setDownloadNotice(null)}
-              className="text-xs font-semibold text-green-800 hover:text-green-950 p-1 cursor-pointer"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-6 items-start">
           {/* Left Column: Measurements Table & Actions */}
@@ -392,28 +317,16 @@ export function GeneratorHome() {
               {/* Generate Batch PLT Button */}
               <button
                 type="button"
-                onClick={handleGenerateBatchPLT}
-                disabled={isGenerating || rows.length === 0}
+                onClick={handleOpenExport}
+                disabled={rows.length === 0}
                 className="inline-flex items-center gap-2 bg-[#1967d2] hover:bg-[#1558b8] disabled:opacity-60 text-white px-6 py-2.5 rounded-[6px] text-sm font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
-                {isGenerating ? (
-                  <>
-                    <svg className="animate-spin w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                    </svg>
-                    <span>Compiling Nesting...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    <span>Generate Batch PLT ({rows.length})</span>
-                  </>
-                )}
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>Open CNC Export ({rows.length})</span>
               </button>
             </div>
           </div>
@@ -475,6 +388,13 @@ export function GeneratorHome() {
           </div>
         </div>
       </div>
+      <CncExportModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        rows={rows}
+        maxBedDrop={Number(maxBedDrop)}
+        maxBedWidth={Number(maxBedWidth)}
+      />
     </section>
   );
 }
