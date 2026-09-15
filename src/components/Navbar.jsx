@@ -13,7 +13,7 @@ export function Navbar({ currentPath = '/', onNavigate }) {
   const isGeneratePage = currentPath === '/generate';
 
   return (
-    <header className="w-full bg-white border-b border-slate-200/60 sticky top-0 z-50">
+    <header className="sticky top-0 z-50 w-full border-b border-sky-200/70 bg-sky-50/75 backdrop-blur-xl">
       <div className="max-w-[1280px] mx-auto px-6 py-3.5 flex items-center justify-between">
         {/* Brand Logo */}
         <div 

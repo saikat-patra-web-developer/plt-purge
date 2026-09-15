@@ -3,7 +3,7 @@ import PurgeLogo from './Logo';
 
 export function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-slate-100 py-6">
+    <footer className="w-full border-t border-sky-200/70 bg-sky-100/55 py-6 backdrop-blur-lg">
       <div className="max-w-[1120px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-5">
         {/* Left: Brand Logo */}
         <div className="flex items-center">

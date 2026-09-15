@@ -32,7 +32,7 @@ function App() {
   const isGeneratePage = currentPath === '/generate' || currentPath.startsWith('/generate');
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-white overflow-x-hidden">
+    <div className="alphenex-inspired-bg flex min-h-screen w-full flex-col overflow-x-hidden">
       {/* Header (Navbar with Purge logo and navigation controls) */}
       <Navbar currentPath={currentPath} onNavigate={navigate} />
 

@@ -21,7 +21,7 @@ export function ContactModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-5 z-[100] animate-[fadeIn_0.2s_ease]" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-[440px] p-8 relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-sky-50/95 border border-sky-200 rounded-xl w-full max-w-[440px] p-8 relative shadow-2xl backdrop-blur-xl" onClick={(e) => e.stopPropagation()}>
         <button 
           className="absolute top-4 right-4.5 text-2xl text-slate-400 hover:text-slate-800 leading-none p-1 rounded cursor-pointer transition-colors" 
           onClick={onClose} 
@@ -73,7 +73,7 @@ export function ContactModal({ isOpen, onClose }) {
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-semibold text-slate-700">Cutting Machine Model</label>
               <select 
-                className="px-3.5 py-2.5 rounded-[6px] border border-slate-300 text-[14px] text-slate-900 outline-none focus:border-[#1967d2] focus:ring-3 focus:ring-[#1967d2]/15 transition-all bg-white"
+                className="px-3.5 py-2.5 rounded-[6px] border border-sky-200 text-[14px] text-slate-900 outline-none focus:border-[#1967d2] focus:ring-3 focus:ring-[#1967d2]/15 transition-all bg-sky-50"
                 value={machine} 
                 onChange={(e) => setMachine(e.target.value)}
               >

@@ -71,7 +71,7 @@ export function BlindsIndustry() {
               <div
                 key={item.id}
                 className={`group flex flex-col items-center text-center p-2 rounded-lg cursor-pointer transition-all hover:-translate-y-0.5 select-none ${
-                  isSelected ? 'bg-white/60 shadow-sm' : ''
+                  isSelected ? 'bg-sky-100/70 shadow-sm' : ''
                 }`}
                 onClick={() => setSelectedBlind(isSelected ? null : item.id)}
                 title={item.name}

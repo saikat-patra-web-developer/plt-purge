@@ -10,8 +10,8 @@ export function Hero({ onGenerateClick }) {
   };
 
   return (
-    <section className="w-full bg-white py-11 overflow-hidden" id="hero">
-      <div className="max-w-[1120px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] items-center gap-7">
+    <section className="w-full bg-transparent py-11 overflow-hidden" id="hero">
+      <div className="max-w-[1120px] mx-auto px-6 flex items-center">
         {/* Left Column: Copy & Feature Highlights & CTAs */}
         <div className="flex flex-col">
           <h1 className="text-[44px] leading-[1.15] font-extrabold text-slate-900 tracking-[-1.2px] mb-4.5">
@@ -83,22 +83,6 @@ export function Hero({ onGenerateClick }) {
           </div>
         </div>
 
-        {/* Right Column: High-fidelity Monitor & Desk Mockup WebP */}
-        <div className="flex items-center justify-center relative">
-          <div className="w-full max-w-[540px] relative hover:scale-[1.008] transition-transform duration-300">
-            <picture>
-              <source srcSet="/images/hero-monitor@2x.webp 2x, /images/hero-monitor.webp 1x" type="image/webp" />
-              <img 
-                src="/images/hero-monitor.webp" 
-                alt="Purge PLT File Generator CAD software displayed on monitor with cutting settings" 
-                className="w-full h-auto block object-contain"
-                loading="eager"
-                width="916"
-                height="760"
-              />
-            </picture>
-          </div>
-        </div>
       </div>
     </section>
   );

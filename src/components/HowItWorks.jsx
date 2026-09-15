@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function HowItWorks() {
   const steps = [
     {
@@ -64,28 +62,6 @@ export function HowItWorks() {
 
   return (
     <section className="w-full bg-[#0a192e] relative overflow-hidden py-8 md:py-10" id="how-it-works">
-      {/* Automated CNC Flatbed Blind Cutter Machine Background on Right */}
-      <div className="absolute top-0 right-0 bottom-0 h-full w-[44%] max-w-[480px] pointer-events-none hidden md:flex items-center justify-end z-10">
-        <picture className="h-full w-full">
-          <source srcSet="/images/how-it-works-machine-v2@2x.webp 2x, /images/how-it-works-machine-v2.webp 1x" type="image/webp" />
-          <img 
-            src="/images/how-it-works-machine-v2.webp" 
-            alt="Automated CNC flatbed blind cutting machine" 
-            className="h-full w-full object-cover object-left [mask-image:linear-gradient(to_right,transparent_0%,black_15%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_15%)]"
-            loading="lazy"
-          />
-        </picture>
-      </div>
-
-      {/* Subtle overlay for mobile */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-20 md:hidden z-10">
-        <img 
-          src="/images/how-it-works-machine-v2.webp" 
-          alt="" 
-          className="h-full w-full object-cover object-right"
-        />
-      </div>
-
       <div className="max-w-[1120px] mx-auto px-6 relative z-20">
         {/* Section Heading */}
         <div className="text-center mb-6">
@@ -98,11 +74,9 @@ export function HowItWorks() {
         </div>
 
         {/* 4 Steps Row with Perfectly Centered Arrows */}
-        <div className="flex flex-col sm:grid sm:grid-cols-[auto_auto_auto_auto_auto_auto_auto] items-start justify-start max-w-[760px] gap-y-5">
+        <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-6 sm:grid-cols-4 sm:gap-0">
           {steps.map((step, idx) => (
-            <React.Fragment key={step.num}>
-              {/* Step Column */}
-              <div className="flex flex-col">
+              <div key={step.num} className="relative flex min-w-0 flex-col px-4 first:pl-0 last:pr-0">
                 {/* Header: Circle Badge + Icon */}
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-[22px] h-[22px] min-w-[22px] rounded-full bg-[#1b2d45] text-slate-200 text-[11px] font-bold flex items-center justify-center">
@@ -122,17 +96,14 @@ export function HowItWorks() {
                 <p className="text-[11px] text-[#8fa0b5] leading-[1.35]">
                   {step.description}
                 </p>
-              </div>
-
-              {/* Connecting Blue Arrow (centered with title) */}
               {idx < steps.length - 1 && (
-                <div className="hidden sm:flex items-center justify-center text-[#2563eb] px-3 pt-[31px] shrink-0" aria-hidden="true">
+                <div className="absolute right-0 top-[35px] hidden translate-x-1/2 items-center justify-center text-[#2563eb] sm:flex" aria-hidden="true">
                   <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               )}
-            </React.Fragment>
+              </div>
           ))}
         </div>
       </div>

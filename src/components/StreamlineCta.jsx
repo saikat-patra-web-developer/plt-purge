@@ -10,7 +10,7 @@ export function StreamlineCta({ onGenerateClick }) {
   };
 
   return (
-    <section className="w-full bg-white py-11" id="streamline">
+    <section className="w-full bg-sky-50/35 py-11 backdrop-blur-[2px]" id="streamline">
       <div className="max-w-[1120px] mx-auto px-6 flex flex-col items-start">
         <h2 className="text-[30px] font-extrabold text-slate-900 leading-[1.2] tracking-tight mb-2.5">
           Ready to Streamline<br />

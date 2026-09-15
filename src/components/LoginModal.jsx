@@ -33,7 +33,7 @@ export function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-5 z-[100] animate-[fadeIn_0.2s_ease]" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-[440px] p-8 relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-sky-50/95 border border-sky-200 rounded-xl w-full max-w-[440px] p-8 relative shadow-2xl backdrop-blur-xl" onClick={(e) => e.stopPropagation()}>
         <button 
           className="absolute top-4 right-4.5 text-2xl text-slate-400 hover:text-slate-800 leading-none p-1 rounded cursor-pointer transition-colors" 
           onClick={onClose} 

@@ -60,9 +60,9 @@ export function PanelBlindIcon({ className = "blind-icon-svg" }) {
       {/* Top track */}
       <line x1="8" y1="7" x2="46" y2="7" stroke="#1e293b" strokeWidth="2.4" strokeLinecap="round" />
       {/* 3 Overlapping sliding panels */}
-      <rect x="11" y="9" width="11" height="28" stroke="#1e293b" strokeWidth="2" fill="white" />
-      <rect x="20" y="9" width="11" height="28" stroke="#1e293b" strokeWidth="2" fill="white" />
-      <rect x="29" y="9" width="11" height="28" stroke="#1e293b" strokeWidth="2" fill="white" />
+      <rect x="11" y="9" width="11" height="28" stroke="#1e293b" strokeWidth="2" fill="#eaf7ff" />
+      <rect x="20" y="9" width="11" height="28" stroke="#1e293b" strokeWidth="2" fill="#eaf7ff" />
+      <rect x="29" y="9" width="11" height="28" stroke="#1e293b" strokeWidth="2" fill="#eaf7ff" />
       {/* Right track stop */}
       <path d="M40 7V13" stroke="#1e293b" strokeWidth="1.5" />
     </svg>
@@ -90,7 +90,7 @@ export function OutdoorShadeIcon({ className = "blind-icon-svg" }) {
   return (
     <svg viewBox="0 0 54 44" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       {/* Top cassette box */}
-      <rect x="8" y="7" width="38" height="7" rx="1.5" stroke="#1e293b" strokeWidth="2" fill="white" />
+      <rect x="8" y="7" width="38" height="7" rx="1.5" stroke="#1e293b" strokeWidth="2" fill="#eaf7ff" />
       {/* Side channels / posts */}
       <line x1="10" y1="14" x2="10" y2="36" stroke="#1e293b" strokeWidth="2" />
       <line x1="44" y1="14" x2="44" y2="36" stroke="#1e293b" strokeWidth="2" />

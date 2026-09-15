@@ -61,8 +61,9 @@ export function GeneratorHome() {
   };
 
   return (
-    <section id="generate" className="flex-1 w-full bg-slate-50 border-t border-slate-200 py-10 md:py-12 text-slate-900">
-      <div className="max-w-[1280px] w-full mx-auto px-6">
+    <section id="generate" className="relative isolate flex-1 w-full overflow-hidden border-t border-sky-200/60 py-10 text-slate-900 md:py-12">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(255,255,255,0.5)_0%,rgba(255,255,255,0.18)_46%,transparent_100%)]" aria-hidden="true" />
+      <div className="relative z-10 max-w-[1280px] w-full mx-auto px-6">
         {/* Section Title */}
         <div className="mb-6">
           <div className="flex items-center gap-3">
@@ -89,7 +90,7 @@ export function GeneratorHome() {
             onMaxBedWidthChange={setMaxBedWidth}
           >
           {/* Measurements Table & Actions */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+          <div className="overflow-hidden rounded-xl border border-sky-200/80 bg-sky-50/75 shadow-xs backdrop-blur-xl">
             {/* Table Header Bar */}
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex items-center gap-2">
@@ -104,7 +105,7 @@ export function GeneratorHome() {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-[6px] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-sky-100/80 hover:bg-sky-200/80 border border-sky-200 px-3 py-1.5 rounded-[6px] transition-colors cursor-pointer"
                   title="Reset all rows back to default"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -131,12 +132,19 @@ export function GeneratorHome() {
             {/* Editable Measurements Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
+                <colgroup>
+                  <col className="w-10" />
+                  <col />
+                  <col className="w-[140px]" />
+                  <col className="w-[140px]" />
+                  <col className="w-14" />
+                </colgroup>
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/80 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">
                     <th className="py-3 px-3 w-10 text-center">#</th>
                     <th className="py-3 px-3 min-w-[140px]">Location</th>
-                    <th className="py-3 px-3 min-w-[140px]">Width (mm)</th>
-                    <th className="py-3 px-3 min-w-[140px]">Drop (mm)</th>
+                    <th className="py-3 px-3 whitespace-nowrap">Width (mm)</th>
+                    <th className="py-3 px-3 whitespace-nowrap">Drop (mm)</th>
                     <th className="py-3 px-3 w-10 text-center">Del</th>
                   </tr>
                 </thead>
@@ -169,7 +177,7 @@ export function GeneratorHome() {
                             value={row.width}
                             onChange={(e) => handleUpdateRow(row.id, 'width', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-white border border-slate-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
+                            className="w-[116px] bg-sky-50/90 border border-sky-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
                           />
                         </td>
 
@@ -183,7 +191,7 @@ export function GeneratorHome() {
                             value={row.drop}
                             onChange={(e) => handleUpdateRow(row.id, 'drop', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-white border border-slate-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
+                            className="w-[116px] bg-sky-50/90 border border-sky-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
                           />
                         </td>
 
@@ -214,7 +222,7 @@ export function GeneratorHome() {
                 <button
                   type="button"
                   onClick={handleAddRow}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-[#1967d2] bg-white border border-slate-300 hover:border-[#1967d2] px-3.5 py-2 rounded-[6px] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-[#1967d2] bg-sky-100/80 border border-sky-200 hover:border-[#1967d2] px-3.5 py-2 rounded-[6px] transition-colors cursor-pointer"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="12" y1="5" x2="12" y2="19" />
