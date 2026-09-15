@@ -74,9 +74,9 @@ export function HowItWorks() {
         </div>
 
         {/* 4 Steps Row with Perfectly Centered Arrows */}
-        <div className="mx-auto grid max-w-[1080px] grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-0">
+        <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-8">
           {steps.map((step, idx) => (
-              <div key={step.num} className="relative flex min-w-0 flex-col rounded-xl border border-slate-700/60 bg-slate-900/35 p-5 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-6 lg:first:pl-0 lg:last:pr-0">
+              <div key={step.num} className="group relative flex min-h-[150px] min-w-0 flex-col items-center justify-center rounded-2xl border border-slate-700/70 bg-slate-900/50 p-5 text-center shadow-lg shadow-slate-950/10 transition-colors hover:border-blue-500/40 hover:bg-slate-900/70 sm:p-6">
                 {/* Header: Circle Badge + Icon */}
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-[22px] h-[22px] min-w-[22px] rounded-full bg-[#1b2d45] text-slate-200 text-[11px] font-bold flex items-center justify-center">
@@ -88,17 +88,17 @@ export function HowItWorks() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-[13px] font-bold text-white tracking-tight leading-tight mb-1 whitespace-nowrap">
+                <h3 className="mb-1.5 text-[14px] font-bold leading-tight tracking-tight text-white">
                   {step.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-[11px] text-[#8fa0b5] leading-[1.35]">
+                <p className="text-[12px] leading-[1.45] text-[#8fa0b5]">
                   {step.description}
                 </p>
               {idx < steps.length - 1 && (
-                <div className="absolute right-0 top-[35px] hidden translate-x-1/2 items-center justify-center text-[#3b82f6] lg:flex" aria-hidden="true">
-                  <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <div className="absolute -right-[25px] top-1/2 hidden -translate-y-1/2 items-center justify-center text-[#3b82f6] lg:flex" aria-hidden="true">
+                  <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
