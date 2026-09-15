@@ -63,7 +63,7 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="w-full bg-[#0a192e] relative overflow-hidden py-6" id="how-it-works">
+    <section className="w-full bg-[#0a192e] relative overflow-hidden py-8 md:py-10" id="how-it-works">
       {/* Automated CNC Flatbed Blind Cutter Machine Background on Right */}
       <div className="absolute top-0 right-0 bottom-0 h-full w-[44%] max-w-[480px] pointer-events-none hidden md:flex items-center justify-end z-10">
         <picture className="h-full w-full">
@@ -88,20 +88,21 @@ export function HowItWorks() {
 
       <div className="max-w-[1120px] mx-auto px-6 relative z-20">
         {/* Section Heading */}
-        <div className="text-center mb-5.5">
-          <h2 className="text-[26px] font-extrabold text-white tracking-tight mb-1">
+        <div className="text-center mb-6">
+          <h2 className="text-[25px] sm:text-[26px] font-extrabold text-white tracking-tight mb-1">
             How It Works
           </h2>
-          <p className="text-[13.5px] text-[#8fa0b5]">
+          <p className="text-[13px] sm:text-[13.5px] text-[#8fa0b5]">
             Get your PLT file in just a few simple steps.
           </p>
         </div>
 
-        {/* 4 Steps Row */}
-        <div className="flex flex-col md:flex-row items-start justify-start gap-4 md:gap-3 max-w-[670px]">
+        {/* 4 Steps Row with Perfectly Centered Arrows */}
+        <div className="flex flex-col sm:grid sm:grid-cols-[auto_auto_auto_auto_auto_auto_auto] items-start justify-start max-w-[760px] gap-y-5">
           {steps.map((step, idx) => (
             <React.Fragment key={step.num}>
-              <div className="flex flex-col flex-1 min-w-[125px]">
+              {/* Step Column */}
+              <div className="flex flex-col">
                 {/* Header: Circle Badge + Icon */}
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-[22px] h-[22px] min-w-[22px] rounded-full bg-[#1b2d45] text-slate-200 text-[11px] font-bold flex items-center justify-center">
@@ -113,7 +114,7 @@ export function HowItWorks() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-[13px] font-bold text-white tracking-tight leading-tight mb-1">
+                <h3 className="text-[13px] font-bold text-white tracking-tight leading-tight mb-1 whitespace-nowrap">
                   {step.title}
                 </h3>
 
@@ -123,9 +124,9 @@ export function HowItWorks() {
                 </p>
               </div>
 
-              {/* Connecting Blue Arrow (aligned with title) */}
+              {/* Connecting Blue Arrow (centered with title) */}
               {idx < steps.length - 1 && (
-                <div className="hidden md:flex items-center justify-center text-[#2563eb] pt-7 px-0.5 self-start" aria-hidden="true">
+                <div className="hidden sm:flex items-center justify-center text-[#2563eb] px-3 pt-[31px] shrink-0" aria-hidden="true">
                   <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
