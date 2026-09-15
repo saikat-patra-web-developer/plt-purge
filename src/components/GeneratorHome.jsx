@@ -1,26 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 export function GeneratorHome() {
   const initialRows = [
     {
       id: 1,
-      type: 'Roller Blind',
+      location: 'Window 1',
       width: 1200,
-      drop: 1500,
-      fabric: 'Sunfilter 3000',
-      includeTube: true,
-      includeRail: true,
-      includeNotch: true
-    },
-    {
-      id: 2,
-      type: 'Vertical Blind',
-      width: 1800,
-      drop: 2100,
-      fabric: 'Blockout Classic',
-      includeTube: false,
-      includeRail: true,
-      includeNotch: true
+      drop: 1500
     }
   ];
 
@@ -28,20 +14,20 @@ export function GeneratorHome() {
   const [selectedRowId, setSelectedRowId] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState(null);
+  const [maxBedDrop, setMaxBedDrop] = useState(3000);
+  const [maxBedWidth, setMaxBedWidth] = useState(3000);
+  const nextWindowNumber = useRef(2);
 
   // Add new row
   const handleAddRow = () => {
     const newId = Date.now();
     const newRow = {
       id: newId,
-      type: 'Roller Blind',
+      location: `Window ${nextWindowNumber.current}`,
       width: 1000,
-      drop: 1200,
-      fabric: 'Sunfilter 3000',
-      includeTube: true,
-      includeRail: true,
-      includeNotch: true
+      drop: 1200
     };
+    nextWindowNumber.current += 1;
     setRows(prevRows => [...prevRows, newRow]);
     setSelectedRowId(newId);
   };
@@ -52,15 +38,12 @@ export function GeneratorHome() {
       setRows([
         {
           id: 1,
-          type: 'Roller Blind',
+          location: 'Window 1',
           width: 1200,
-          drop: 1500,
-          fabric: 'Sunfilter 3000',
-          includeTube: true,
-          includeRail: true,
-          includeNotch: true
+          drop: 1500
         }
       ]);
+      nextWindowNumber.current = 2;
       setSelectedRowId(1);
       setDownloadNotice(null);
     }
@@ -86,6 +69,24 @@ export function GeneratorHome() {
 
   // Generate PLT file for the entire batch
   const handleGenerateBatchPLT = () => {
+    const bedDrop = Number(maxBedDrop);
+    const bedWidth = Number(maxBedWidth);
+    const invalidWindow = rows.find((row) => {
+      const width = Number(row.width);
+      const drop = Number(row.drop);
+      return !Number.isFinite(width) || !Number.isFinite(drop) || width <= 0 || drop <= 0 || width > bedWidth || drop > bedDrop;
+    });
+
+    if (!Number.isFinite(bedDrop) || !Number.isFinite(bedWidth) || bedDrop <= 0 || bedWidth <= 0) {
+      window.alert('Enter valid maximum bed dimensions before generating the PLT file.');
+      return;
+    }
+
+    if (invalidWindow) {
+      window.alert(`${invalidWindow.location} must be within the ${bedDrop} mm drop and ${bedWidth} mm width bed limits.`);
+      return;
+    }
+
     setIsGenerating(true);
     setTimeout(() => {
       setIsGenerating(false);
@@ -94,22 +95,12 @@ export function GeneratorHome() {
       let pltContent = 'IN;SP1;IP;VS20;\n';
       let offsetX = 100;
 
-      rows.forEach((r, idx) => {
+      rows.forEach((r) => {
         const w = (Number(r.width) || 1000) * 10;
         const h = (Number(r.drop) || 1200) * 10;
 
-        pltContent += `\n; --- BLIND ${idx + 1}: ${r.type} (${r.width}x${r.drop}mm) ---\n`;
         pltContent += `PA${offsetX},100;PD;PR${w},0;PR0,${h};PR-${w},0;PR0,-${h};PU;\n`;
-
-        if (r.includeRail) {
-          pltContent += `PA${offsetX},${h + 150};PD;PR${w},0;PR0,200;PR-${w},0;PR0,-200;PU;\n`;
-        }
-
-        if (r.includeTube) {
-          pltContent += `PA${offsetX + w + 100},100;PD;PR400,0;PR0,${h};PR-400,0;PR0,-${h};PU;\n`;
-        }
-
-        offsetX += w + (r.includeTube ? 600 : 200);
+        offsetX += w + 200;
       });
 
       pltContent += '\nPU;PA0,0;SP0;\n';
@@ -133,7 +124,7 @@ export function GeneratorHome() {
     }, 600);
   };
 
-  const selectedBlind = rows.find(r => r.id === selectedRowId) || rows[0];
+  const selectedWindow = rows.find(r => r.id === selectedRowId) || rows[0];
 
   // Quick stats
   const totalWidth = rows.reduce((sum, r) => sum + (Number(r.width) || 0), 0);
@@ -155,7 +146,7 @@ export function GeneratorHome() {
               Batch Blind Measurements
             </h2>
             <p className="text-sm text-slate-500 mt-1">
-              Add multiple blind widths and drops to configure cutting allowances and generate HPGL .PLT files.
+              Add window locations, widths, and drops to generate HPGL .PLT files.
             </p>
           </div>
 
@@ -172,6 +163,51 @@ export function GeneratorHome() {
             <div className="px-3 py-1 text-center">
               <span className="text-[11px] font-bold uppercase text-slate-400 block">Avg Drop</span>
               <span className="text-base font-bold text-slate-700">{avgDrop} mm</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Xiao cutting-bed limits */}
+        <div className="mb-6 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-xs">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <label htmlFor="max-bed-drop" className="mb-1.5 block text-xs font-bold text-slate-700">
+                Max Bed Drop (X)
+              </label>
+              <div className="relative">
+                <input
+                  id="max-bed-drop"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={maxBedDrop}
+                  onChange={(event) => setMaxBedDrop(event.target.value)}
+                  className="w-full rounded-[6px] border border-slate-300 bg-white px-3.5 py-2.5 pr-12 text-sm font-bold text-slate-900 outline-none transition-all focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400">mm</span>
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <label htmlFor="max-bed-width" className="mb-1.5 block text-xs font-bold text-slate-700">
+                Max Bed Width (Y)
+              </label>
+              <div className="relative">
+                <input
+                  id="max-bed-width"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={maxBedWidth}
+                  onChange={(event) => setMaxBedWidth(event.target.value)}
+                  className="w-full rounded-[6px] border border-slate-300 bg-white px-3.5 py-2.5 pr-12 text-sm font-bold text-slate-900 outline-none transition-all focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400">mm</span>
+              </div>
+            </div>
+
+            <div className="rounded-[6px] bg-blue-50 px-3.5 py-2.5 text-xs font-semibold text-[#1967d2]">
+              Xiao PLT bed limits
             </div>
           </div>
         </div>
@@ -251,11 +287,9 @@ export function GeneratorHome() {
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/80 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">
                     <th className="py-3 px-3 w-10 text-center">#</th>
-                    <th className="py-3 px-3 min-w-[140px]">Blind Type</th>
-                    <th className="py-3 px-3 w-28">Width (mm)</th>
-                    <th className="py-3 px-3 w-28">Drop (mm)</th>
-                    <th className="py-3 px-3 min-w-[120px]">Fabric</th>
-                    <th className="py-3 px-3 text-center min-w-[140px]">Options</th>
+                    <th className="py-3 px-3 min-w-[140px]">Location</th>
+                    <th className="py-3 px-3 min-w-[140px]">Width (mm)</th>
+                    <th className="py-3 px-3 min-w-[140px]">Drop (mm)</th>
                     <th className="py-3 px-3 w-10 text-center">Del</th>
                   </tr>
                 </thead>
@@ -275,21 +309,11 @@ export function GeneratorHome() {
                           {index + 1}
                         </td>
 
-                        {/* Blind Type */}
+                        {/* Window Location */}
                         <td className="py-3 px-3">
-                          <select
-                            value={row.type}
-                            onChange={(e) => handleUpdateRow(row.id, 'type', e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-white border border-slate-200 rounded-[6px] px-2 py-1.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#1967d2]"
-                          >
-                            <option value="Roller Blind">Roller Blind</option>
-                            <option value="Vertical Blind">Vertical Blind</option>
-                            <option value="Venetian Blind">Venetian Blind</option>
-                            <option value="Panel Blind">Panel Blind</option>
-                            <option value="Roman Blind">Roman Blind</option>
-                            <option value="Outdoor Shade">Outdoor Shade</option>
-                          </select>
+                          <span className="inline-flex items-center rounded-[6px] bg-blue-50 px-3 py-1.5 text-xs font-bold text-[#1967d2]">
+                            {row.location}
+                          </span>
                         </td>
 
                         {/* Width */}
@@ -297,7 +321,7 @@ export function GeneratorHome() {
                           <input
                             type="number"
                             min="200"
-                            max="5000"
+                            max={maxBedWidth || undefined}
                             step="10"
                             value={row.width}
                             onChange={(e) => handleUpdateRow(row.id, 'width', e.target.value)}
@@ -311,58 +335,13 @@ export function GeneratorHome() {
                           <input
                             type="number"
                             min="200"
-                            max="5000"
+                            max={maxBedDrop || undefined}
                             step="10"
                             value={row.drop}
                             onChange={(e) => handleUpdateRow(row.id, 'drop', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
                             className="w-full bg-white border border-slate-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
                           />
-                        </td>
-
-                        {/* Fabric */}
-                        <td className="py-3 px-3">
-                          <input
-                            type="text"
-                            value={row.fabric}
-                            onChange={(e) => handleUpdateRow(row.id, 'fabric', e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-white border border-slate-200 rounded-[6px] px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-[#1967d2]"
-                            placeholder="Fabric code..."
-                          />
-                        </td>
-
-                        {/* Cutting Options Toggle */}
-                        <td className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-2 text-[11px] text-slate-600 font-medium">
-                            <label className="flex items-center gap-1 cursor-pointer" title="Include Tube Allowance">
-                              <input
-                                type="checkbox"
-                                checked={row.includeTube}
-                                onChange={(e) => handleUpdateRow(row.id, 'includeTube', e.target.checked)}
-                                className="rounded text-[#1967d2]"
-                              />
-                              <span>Tube</span>
-                            </label>
-                            <label className="flex items-center gap-1 cursor-pointer" title="Include Bottom Rail Pocket">
-                              <input
-                                type="checkbox"
-                                checked={row.includeRail}
-                                onChange={(e) => handleUpdateRow(row.id, 'includeRail', e.target.checked)}
-                                className="rounded text-[#1967d2]"
-                              />
-                              <span>Rail</span>
-                            </label>
-                            <label className="flex items-center gap-1 cursor-pointer" title="Include Fabric Notches">
-                              <input
-                                type="checkbox"
-                                checked={row.includeNotch}
-                                onChange={(e) => handleUpdateRow(row.id, 'includeNotch', e.target.checked)}
-                                className="rounded text-[#1967d2]"
-                              />
-                              <span>Notch</span>
-                            </label>
-                          </div>
                         </td>
 
                         {/* Delete Row */}
@@ -448,11 +427,11 @@ export function GeneratorHome() {
                   2D CAD PREVIEW
                 </span>
                 <span className="text-xs font-semibold text-slate-300">
-                  Row #{rows.findIndex(r => r.id === selectedBlind?.id) + 1}: {selectedBlind?.type}
+                  {selectedWindow?.location}
                 </span>
               </div>
               <span className="text-xs font-mono font-bold text-sky-300">
-                {selectedBlind?.width} &times; {selectedBlind?.drop} mm
+                {selectedWindow?.width} &times; {selectedWindow?.drop} mm
               </span>
             </div>
 
@@ -476,41 +455,8 @@ export function GeneratorHome() {
                   {/* Main Fabric Sheet */}
                   <rect x="40" y="30" width="220" height="170" rx="2" stroke="#38bdf8" fill="rgba(56, 189, 248, 0.05)" />
                   <text x="50" y="50" fill="#e2e8f0" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                    MAIN FABRIC • {selectedBlind?.width} x {selectedBlind?.drop} mm
+                    {selectedWindow?.location?.toUpperCase()} • {selectedWindow?.width} x {selectedWindow?.drop} mm
                   </text>
-                  <text x="50" y="70" fill="#94a3b8" fontSize="10" fontFamily="monospace">
-                    Material: {selectedBlind?.fabric}
-                  </text>
-
-                  {/* Top Tube Allowance */}
-                  {selectedBlind?.includeTube && (
-                    <>
-                      <rect x="40" y="210" width="220" height="35" rx="2" stroke="#eab308" strokeDasharray="3 2" fill="rgba(234, 179, 8, 0.05)" />
-                      <text x="50" y="232" fill="#fde047" fontSize="10" fontFamily="monospace">
-                        TOP TUBE ALLOWANCE (ROLL)
-                      </text>
-                    </>
-                  )}
-
-                  {/* Bottom Rail Pocket */}
-                  {selectedBlind?.includeRail && (
-                    <>
-                      <rect x="40" y="255" width="220" height="25" rx="2" stroke="#4ade80" strokeDasharray="3 2" fill="rgba(74, 222, 128, 0.05)" />
-                      <text x="50" y="272" fill="#86efac" fontSize="9" fontFamily="monospace">
-                        BOTTOM RAIL POCKET
-                      </text>
-                    </>
-                  )}
-
-                  {/* Right Side Piece / Notches */}
-                  {selectedBlind?.includeNotch && (
-                    <>
-                      <rect x="275" y="30" width="90" height="80" rx="2" stroke="#a855f7" fill="rgba(168, 85, 247, 0.05)" />
-                      <text x="285" y="55" fill="#d8b4fe" fontSize="9" fontFamily="monospace">
-                        CORNER NOTCH
-                      </text>
-                    </>
-                  )}
                 </g>
 
                 {/* Cutter Origin Marker */}
@@ -523,7 +469,7 @@ export function GeneratorHome() {
 
             {/* Footer Information */}
             <div className="px-5 py-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-              <span>Machine Spec: <strong>HPGL Standard (0.025mm resolution)</strong></span>
+              <span>Machine Spec: <strong>Xiao-compatible HPGL/PLT</strong></span>
               <span className="text-slate-300 font-mono">Status: Ready to plot</span>
             </div>
           </div>
