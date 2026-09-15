@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { Cpu } from 'lucide-react';
 import CncExportModal from './CncExportModal';
 
 export function GeneratorHome() {
@@ -73,24 +74,24 @@ export function GeneratorHome() {
   return (
     <section id="generate" className="flex-1 w-full bg-slate-50 border-t border-slate-200 py-10 md:py-12 text-slate-900">
       <div className="max-w-[1280px] w-full mx-auto px-6">
-        {/* Section Title & Stats */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-100/80 text-[#1967d2] text-xs font-bold uppercase tracking-wider mb-2">
-              <span className="w-2 h-2 rounded-full bg-[#1967d2] animate-pulse"></span>
-              PLT File Generator Studio
+        {/* Section Title */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white shrink-0">
+              <Cpu size={20} />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Batch Blind Measurements
-            </h2>
-            <p className="text-sm text-slate-500 mt-1">
-              Add window locations, widths, and drops to generate HPGL .PLT files.
-            </p>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                CNC &amp; CAD Cutting Export
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500">
+                Xiao-compatible cutting workspace
+              </p>
+            </div>
           </div>
-
         </div>
 
-        <div className="mt-6">
+        <div>
           <CncExportModal
             rows={rows}
             maxBedDrop={Number(maxBedDrop)}

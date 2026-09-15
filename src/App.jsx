@@ -38,7 +38,7 @@ function App() {
 
       {/* Route Content */}
       {isGeneratePage ? (
-        /* /generate route: Displays Batch Blind Measurements with Header & Footer */
+        /* /generate route: Displays CNC & CAD Cutting Export workspace with Header & Footer */
         <GeneratorHome />
       ) : (
         /* / landing route: Full homepage with Hero, Features, How It Works, CTA */
