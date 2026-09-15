@@ -60,17 +60,6 @@ export function GeneratorHome() {
     setRows(updated);
   };
 
-  const handleViewExport = () => {
-    const bedDrop = Number(maxBedDrop);
-    const bedWidth = Number(maxBedWidth);
-
-    if (!Number.isFinite(bedDrop) || !Number.isFinite(bedWidth) || bedDrop <= 0 || bedWidth <= 0) {
-      window.alert('Enter valid maximum bed dimensions before opening the cutting workspace.');
-      return;
-    }
-    document.getElementById('cnc-export-workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   return (
     <section id="generate" className="flex-1 w-full bg-slate-50 border-t border-slate-200 py-10 md:py-12 text-slate-900">
       <div className="max-w-[1280px] w-full mx-auto px-6">
@@ -220,7 +209,7 @@ export function GeneratorHome() {
             </div>
 
             {/* Bottom Actions Footer */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -243,20 +232,6 @@ export function GeneratorHome() {
                 </button>
               </div>
 
-              {/* Generate Batch PLT Button */}
-              <button
-                type="button"
-                onClick={handleViewExport}
-                disabled={rows.length === 0}
-                className="inline-flex items-center gap-2 bg-[#1967d2] hover:bg-[#1558b8] disabled:opacity-60 text-white px-6 py-2.5 rounded-[6px] text-sm font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                <span>View CNC Optimization ({rows.length})</span>
-              </button>
             </div>
           </div>
 
