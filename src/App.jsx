@@ -32,7 +32,7 @@ function App() {
   const isGeneratePage = currentPath === '/generate' || currentPath.startsWith('/generate');
 
   return (
-    <div className="alphenex-inspired-bg flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div className="alphenex-inspired-bg relative flex min-h-screen w-full flex-col overflow-x-hidden">
       {/* Header (Navbar with Purge logo and navigation controls) */}
       <Navbar currentPath={currentPath} onNavigate={navigate} />
 
@@ -42,7 +42,7 @@ function App() {
         <GeneratorHome />
       ) : (
         /* / landing route: Full homepage with Hero, Features, How It Works, CTA */
-        <main>
+        <main className="flex-1">
           {/* Hero Section */}
           <Hero onGenerateClick={() => navigate('/generate')} />
 

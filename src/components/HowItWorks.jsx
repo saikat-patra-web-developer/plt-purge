@@ -61,11 +61,11 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="w-full bg-[#0a192e] relative overflow-hidden py-8 md:py-10" id="how-it-works">
-      <div className="max-w-[1120px] mx-auto px-6 relative z-20">
+    <section className="relative w-full overflow-hidden bg-[#0a192e] py-14 sm:py-16" id="how-it-works">
+      <div className="relative z-20 mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-10">
         {/* Section Heading */}
-        <div className="text-center mb-6">
-          <h2 className="text-[25px] sm:text-[26px] font-extrabold text-white tracking-tight mb-1">
+        <div className="mb-10 text-center">
+          <h2 className="mb-2 text-[27px] font-extrabold tracking-tight text-white sm:text-[30px]">
             How It Works
           </h2>
           <p className="text-[13px] sm:text-[13.5px] text-[#8fa0b5]">
@@ -74,9 +74,9 @@ export function HowItWorks() {
         </div>
 
         {/* 4 Steps Row with Perfectly Centered Arrows */}
-        <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-6 sm:grid-cols-4 sm:gap-0">
+        <div className="mx-auto grid max-w-[1080px] grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-0">
           {steps.map((step, idx) => (
-              <div key={step.num} className="relative flex min-w-0 flex-col px-4 first:pl-0 last:pr-0">
+              <div key={step.num} className="relative flex min-w-0 flex-col rounded-xl border border-slate-700/60 bg-slate-900/35 p-5 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-6 lg:first:pl-0 lg:last:pr-0">
                 {/* Header: Circle Badge + Icon */}
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-[22px] h-[22px] min-w-[22px] rounded-full bg-[#1b2d45] text-slate-200 text-[11px] font-bold flex items-center justify-center">
@@ -97,7 +97,7 @@ export function HowItWorks() {
                   {step.description}
                 </p>
               {idx < steps.length - 1 && (
-                <div className="absolute right-0 top-[35px] hidden translate-x-1/2 items-center justify-center text-[#2563eb] sm:flex" aria-hidden="true">
+                <div className="absolute right-0 top-[35px] hidden translate-x-1/2 items-center justify-center text-[#3b82f6] lg:flex" aria-hidden="true">
                   <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>

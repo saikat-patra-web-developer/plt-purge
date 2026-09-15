@@ -10,9 +10,9 @@ export function StreamlineCta({ onGenerateClick }) {
   };
 
   return (
-    <section className="w-full bg-sky-50/35 py-11 backdrop-blur-[2px]" id="streamline">
-      <div className="max-w-[1120px] mx-auto px-6 flex flex-col items-start">
-        <h2 className="text-[30px] font-extrabold text-slate-900 leading-[1.2] tracking-tight mb-2.5">
+    <section className="w-full bg-sky-50/35 py-14 backdrop-blur-[2px] sm:py-16" id="streamline">
+      <div className="mx-auto flex w-full max-w-[1280px] flex-col items-start px-5 sm:px-6 lg:px-10">
+        <h2 className="mb-3 text-[30px] font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-[34px]">
           Ready to Streamline<br />
           Your Production?
         </h2>

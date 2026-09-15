@@ -10,21 +10,21 @@ export function Hero({ onGenerateClick }) {
   };
 
   return (
-    <section className="w-full bg-transparent py-11 overflow-hidden" id="hero">
-      <div className="max-w-[1120px] mx-auto px-6 flex items-center">
+    <section className="w-full overflow-hidden bg-transparent py-14 sm:py-16 lg:py-20" id="hero">
+      <div className="mx-auto flex w-full max-w-[1280px] items-center px-5 sm:px-6 lg:px-10">
         {/* Left Column: Copy & Feature Highlights & CTAs */}
-        <div className="flex flex-col">
-          <h1 className="text-[44px] leading-[1.15] font-extrabold text-slate-900 tracking-[-1.2px] mb-4.5">
+        <div className="flex w-full max-w-[760px] flex-col">
+          <h1 className="mb-5 text-[36px] font-extrabold leading-[1.1] tracking-[-1.2px] text-slate-900 sm:text-[44px] lg:text-[52px]">
             PLT File Generator<br />
             for <span className="text-[#1967d2]">Blinds Manufacturing</span>
           </h1>
 
-          <p className="text-[16px] text-slate-500 font-normal leading-[1.55] max-w-[460px] mb-7">
+          <p className="mb-8 max-w-[560px] text-[15px] font-normal leading-[1.65] text-slate-500 sm:text-[16px]">
             Convert your blind measurements into precise PLT files, ready for cutting machines. Fast. Accurate. Reliable.
           </p>
 
           {/* Three Feature Pillars */}
-          <div className="flex items-center gap-6 sm:gap-7 mb-8">
+          <div className="mb-9 grid max-w-[720px] grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
             {/* Save Time */}
             <div className="flex items-start gap-2.5">
               <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">

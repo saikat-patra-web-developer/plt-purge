@@ -51,10 +51,10 @@ export function BlindsIndustry() {
   ];
 
   return (
-    <section className="w-full bg-[#ecf5fe] py-11 border-t border-blue-100/60" id="features">
-      <div className="max-w-[1120px] mx-auto px-6">
-        <div className="text-center mb-8.5">
-          <h2 className="text-[27px] font-extrabold text-slate-900 tracking-tight mb-1.5">
+    <section className="w-full border-t border-blue-100/60 bg-[#ecf5fe] py-14 sm:py-16" id="features">
+      <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-10">
+        <div className="mb-10 text-center">
+          <h2 className="mb-2 text-[27px] font-extrabold tracking-tight text-slate-900 sm:text-[30px]">
             Built for the Blinds Industry
           </h2>
           <p className="text-[14.5px] text-slate-600">
@@ -62,7 +62,7 @@ export function BlindsIndustry() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3 items-center justify-between">
+        <div className="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-4 lg:grid-cols-7">
           {blindItems.map((item) => {
             const IconComponent = item.icon;
             const isSelected = selectedBlind === item.id;
@@ -70,7 +70,7 @@ export function BlindsIndustry() {
             return (
               <div
                 key={item.id}
-                className={`group flex flex-col items-center text-center p-2 rounded-lg cursor-pointer transition-all hover:-translate-y-0.5 select-none ${
+                className={`group flex min-h-[112px] flex-col items-center justify-center rounded-xl p-3 text-center cursor-pointer transition-all hover:-translate-y-0.5 hover:bg-white/60 select-none ${
                   isSelected ? 'bg-sky-100/70 shadow-sm' : ''
                 }`}
                 onClick={() => setSelectedBlind(isSelected ? null : item.id)}
@@ -79,7 +79,7 @@ export function BlindsIndustry() {
                 <div className="w-[52px] h-[42px] flex items-center justify-center mb-2.5">
                   <IconComponent className="w-[50px] h-[40px]" />
                 </div>
-                <span className="text-[13.5px] font-semibold text-slate-800 whitespace-nowrap group-hover:text-[#1967d2] transition-colors">
+                <span className="text-[13px] font-semibold text-slate-800 sm:text-[13.5px] lg:whitespace-nowrap group-hover:text-[#1967d2] transition-colors">
                   {item.name}
                 </span>
               </div>

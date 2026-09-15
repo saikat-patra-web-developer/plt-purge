@@ -14,7 +14,7 @@ export function Navbar({ currentPath = '/', onNavigate }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-sky-200/70 bg-sky-50/75 backdrop-blur-xl">
-      <div className="max-w-[1280px] mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between px-5 py-3.5 sm:px-6 lg:px-10">
         {/* Brand Logo */}
         <div 
           className="flex items-center cursor-pointer select-none" 

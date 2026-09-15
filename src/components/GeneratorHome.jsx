@@ -2,23 +2,84 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Cpu, RotateCcw, X } from 'lucide-react';
 import CncExportModal from './CncExportModal';
 
-export function GeneratorHome() {
-  const initialRows = [
-    {
-      id: 1,
-      location: 'Window 1',
-      width: 1200,
-      drop: 1500
-    }
-  ];
+const STORAGE_KEY = 'plt_purge_state_v1';
 
-  const [rows, setRows] = useState(initialRows);
-  const [maxBedDrop, setMaxBedDrop] = useState(3000);
-  const [maxBedWidth, setMaxBedWidth] = useState(3000);
+const DEFAULT_ROWS = [
+  {
+    id: 1,
+    location: 'Window 1',
+    width: 1200,
+    drop: 1500
+  }
+];
+
+const loadSavedState = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      return parsed;
+    }
+  } catch {
+    // fallback if localStorage is disabled or corrupted
+  }
+  return null;
+};
+
+const computeNextWindowNumber = (rowList) => {
+  let maxNum = 1;
+  (rowList || []).forEach((row) => {
+    const match = String(row.location || '').match(/Window\s+(\d+)/i);
+    if (match) {
+      maxNum = Math.max(maxNum, parseInt(match[1], 10));
+    }
+  });
+  return maxNum + 1;
+};
+
+export function GeneratorHome() {
+  const [initial] = useState(() => loadSavedState());
+  const [rows, setRows] = useState(() => {
+    if (initial?.rows && Array.isArray(initial.rows) && initial.rows.length > 0) {
+      return initial.rows;
+    }
+    return DEFAULT_ROWS;
+  });
+  const [maxBedDrop, setMaxBedDrop] = useState(() => {
+    return Number(initial?.maxBedDrop) > 0 ? Number(initial.maxBedDrop) : 3000;
+  });
+  const [maxBedWidth, setMaxBedWidth] = useState(() => {
+    return Number(initial?.maxBedWidth) > 0 ? Number(initial.maxBedWidth) : 3000;
+  });
+  const [axisMode, setAxisMode] = useState(() => {
+    return initial?.axisMode || 'table_dxw';
+  });
+
   const [popup, setPopup] = useState(null);
   const pendingWidthFocus = useRef(null);
-  const nextWindowNumber = useRef(2);
+  const nextWindowNumber = useRef(computeNextWindowNumber(rows));
   const widthInputs = useRef(new Map());
+
+  useEffect(() => {
+    nextWindowNumber.current = computeNextWindowNumber(rows);
+  }, [rows]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          rows,
+          maxBedDrop,
+          maxBedWidth,
+          axisMode,
+        })
+      );
+    } catch {
+      // ignore storage write errors
+    }
+  }, [rows, maxBedDrop, maxBedWidth, axisMode]);
 
   useEffect(() => {
     if (pendingWidthFocus.current === null) return;
@@ -51,21 +112,28 @@ export function GeneratorHome() {
   };
 
   const confirmReset = () => {
-    setRows([
-      {
-        id: 1,
-        location: 'Window 1',
-        width: 1200,
-        drop: 1500
-      }
-    ]);
+    setRows(DEFAULT_ROWS);
+    setMaxBedDrop(3000);
+    setMaxBedWidth(3000);
+    setAxisMode('table_dxw');
     nextWindowNumber.current = 2;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
     setPopup(null);
   };
 
   // Update a single field in a row
   const handleUpdateRow = (id, field, value) => {
     setRows(prevRows => prevRows.map(r => r.id === id ? { ...r, [field]: value } : r));
+  };
+
+  const isMeasurementInvalid = (row, field) => {
+    const value = Number(row[field]);
+    const limit = field === 'width' ? Number(maxBedWidth) : Number(maxBedDrop);
+    return row[field] === '' || !Number.isFinite(value) || value < 200 || (limit > 0 && value > limit);
   };
 
   // Delete a row
@@ -104,6 +172,8 @@ export function GeneratorHome() {
             rows={rows}
             maxBedDrop={Number(maxBedDrop)}
             maxBedWidth={Number(maxBedWidth)}
+            axisMode={axisMode}
+            onAxisModeChange={setAxisMode}
             onMaxBedDropChange={setMaxBedDrop}
             onMaxBedWidthChange={setMaxBedWidth}
           >
@@ -197,9 +267,10 @@ export function GeneratorHome() {
                             max={maxBedWidth || undefined}
                             step="10"
                             value={row.width}
+                            aria-invalid={isMeasurementInvalid(row, 'width')}
                             onChange={(e) => handleUpdateRow(row.id, 'width', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-[116px] bg-sky-50/90 border border-sky-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
+                            className={`w-[116px] rounded-[6px] border bg-sky-50/90 px-2 py-1.5 text-xs font-bold text-slate-900 outline-none ${isMeasurementInvalid(row, 'width') ? 'border-red-500 ring-1 ring-red-500 focus:border-red-500 focus:ring-red-500' : 'border-sky-200 focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]'}`}
                           />
                         </td>
 
@@ -211,9 +282,10 @@ export function GeneratorHome() {
                             max={maxBedDrop || undefined}
                             step="10"
                             value={row.drop}
+                            aria-invalid={isMeasurementInvalid(row, 'drop')}
                             onChange={(e) => handleUpdateRow(row.id, 'drop', e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-[116px] bg-sky-50/90 border border-sky-200 rounded-[6px] px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
+                            className={`w-[116px] rounded-[6px] border bg-sky-50/90 px-2 py-1.5 text-xs font-bold text-slate-900 outline-none ${isMeasurementInvalid(row, 'drop') ? 'border-red-500 ring-1 ring-red-500 focus:border-red-500 focus:ring-red-500' : 'border-sky-200 focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]'}`}
                           />
                         </td>
 
