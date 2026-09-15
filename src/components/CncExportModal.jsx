@@ -174,7 +174,7 @@ export default function CncExportModal({
   const currentAxisMode = onAxisModeChange ? axisMode : internalAxisMode;
   const setAxis = onAxisModeChange || setInternalAxisMode;
   const [activeRun, setActiveRun] = useState(0);
-  const [isZipping, setIsZipping] = useState(false);
+  const [zippingType, setZippingType] = useState(null);
   const optimization = useMemo(() => optimizeBedRuns(rows, maxBedDrop, maxBedWidth), [rows, maxBedDrop, maxBedWidth]);
   const rotated = currentAxisMode === 'table_wxd';
   const bed = optimization.bed_runs[activeRun] || optimization.bed_runs[0];
@@ -185,14 +185,17 @@ export default function CncExportModal({
   const saveBed = (run) => downloadPlt(bedFilename(run), generateBedPlt(run, { pen: 1, origin: 0, rotated }));
   const saveBedDxf = (run) => downloadDxf(dxfFilename(run), generateBedDxf(run, { rotated }));
 
-  const downloadAllBedsZip = async () => {
-    if (isZipping || !optimization.bed_runs.length) return;
-    setIsZipping(true);
+  const downloadAllBedsZip = async (type) => {
+    if (zippingType || !optimization.bed_runs.length) return;
+    setZippingType(type);
     try {
       const zip = new JSZip();
       optimization.bed_runs.forEach((run) => {
-        zip.file(bedFilename(run), generateBedPlt(run, { pen: 1, origin: 0, rotated }));
-        zip.file(dxfFilename(run), generateBedDxf(run, { rotated }));
+        if (type === 'plt') {
+          zip.file(bedFilename(run), generateBedPlt(run, { pen: 1, origin: 0, rotated }));
+        } else {
+          zip.file(dxfFilename(run), generateBedDxf(run, { rotated }));
+        }
       });
       const blob = await zip.generateAsync({
         type: 'blob',
@@ -202,13 +205,13 @@ export default function CncExportModal({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `PURGE_All_Bed_PLTs_${new Date().toISOString().slice(0, 10)}.zip`;
+      link.download = `PURGE_All_Bed_${type === 'plt' ? 'PLTs' : 'DXFs'}_${new Date().toISOString().slice(0, 10)}.zip`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
     } finally {
-      setIsZipping(false);
+      setZippingType(null);
     }
   };
 
@@ -231,7 +234,7 @@ export default function CncExportModal({
       <div className="grid grid-cols-1 items-start gap-4 bg-slate-50 p-3 lg:grid-cols-2">
         <div className="min-w-0">{children}</div>
         <div className="min-w-0 overflow-hidden rounded-xl border border-sky-200/80 bg-sky-50/75 backdrop-blur-xl">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2.5"><div className="flex min-w-0 items-center gap-2 text-xs font-black text-slate-900"><Sparkles size={18} className="shrink-0 text-emerald-600" /><span>CNC Table Bed Optimization (All {rows.length} Windows)</span></div><button type="button" disabled={isZipping || !optimization.bed_runs.length} onClick={downloadAllBedsZip} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"><Download size={13} />{isZipping ? 'Zipping...' : `All PLT + DXF (.zip) (${optimization.bed_runs.length})`}</button></div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2.5"><div className="flex min-w-0 items-center gap-2 text-xs font-black text-slate-900"><Sparkles size={18} className="shrink-0 text-emerald-600" /><span>CNC Table Bed Optimization (All {rows.length} Windows)</span></div><div className="flex flex-wrap gap-2"><button type="button" disabled={Boolean(zippingType) || !optimization.bed_runs.length} onClick={() => downloadAllBedsZip('plt')} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"><Download size={13} />{zippingType === 'plt' ? 'Zipping...' : 'All PLT Zip'}</button><button type="button" disabled={Boolean(zippingType) || !optimization.bed_runs.length} onClick={() => downloadAllBedsZip('dxf')} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-teal-300 bg-white px-3 py-2 text-xs font-bold text-teal-700 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"><Download size={13} />{zippingType === 'dxf' ? 'Zipping...' : 'All DXF Zip'}</button></div></div>
           <div className="p-4">
             <div className="mb-3 rounded-lg border border-teal-100 bg-teal-50/70 px-3 py-2 text-[11px] text-slate-600"><strong className="text-teal-900">Lowest pull among evaluated layouts</strong><span className="ml-2">{optimization.bed_runs.length} bed runs · {optimization.waste_area_m2.toFixed(3)} m² remaining · Grain direction locked</span></div>
             {optimization.bed_runs.length > 1 && (
