@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import PurgeLogo from './Logo';
 
-export function GeneratorHome({ onLogout }) {
+export function GeneratorHome() {
   const initialRows = [
     {
       id: 1,
@@ -143,54 +142,18 @@ export function GeneratorHome({ onLogout }) {
   const avgDrop = rows.length ? Math.round(totalDrop / rows.length) : 0;
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50 text-slate-900">
-      {/* Top Navigation Bar */}
-      <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-        <div className="max-w-[1280px] mx-auto px-6 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <PurgeLogo className="h-9 w-auto" />
-            <div className="h-5 w-[1px] bg-slate-300 hidden sm:block"></div>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 hidden sm:block">
-              PLT File Generator Studio
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* User Profile Badge */}
-            <div className="flex items-center gap-2.5 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full">
-              <div className="w-6 h-6 rounded-full bg-[#1967d2] text-white flex items-center justify-center text-xs font-bold uppercase">
-                P
-              </div>
-              <span className="text-[13px] font-semibold text-slate-700">purge</span>
-              <span className="w-2 h-2 rounded-full bg-green-500" title="Online & Connected"></span>
-            </div>
-
-            {/* Logout Button */}
-            <button
-              type="button"
-              onClick={onLogout}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-[6px] border border-slate-200 hover:border-red-200 transition-colors cursor-pointer"
-              title="Logout from account"
-            >
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Container */}
-      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 py-8">
-        {/* Page Title & Stats */}
+    <section id="generate" className="w-full bg-slate-50 border-t border-slate-200 py-12 text-slate-900 scroll-mt-14">
+      <div className="max-w-[1280px] w-full mx-auto px-6">
+        {/* Section Title & Stats */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-100/80 text-[#1967d2] text-xs font-bold uppercase tracking-wider mb-2">
+              <span className="w-2 h-2 rounded-full bg-[#1967d2] animate-pulse"></span>
+              PLT File Generator Studio
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Batch Blind Measurements
-            </h1>
+            </h2>
             <p className="text-sm text-slate-500 mt-1">
               Add multiple blind widths and drops to configure cutting allowances and generate HPGL .PLT files.
             </p>
@@ -248,9 +211,9 @@ export function GeneratorHome({ onLogout }) {
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#1967d2]"></span>
-                <h2 className="text-base font-bold text-slate-800">
+                <h3 className="text-base font-bold text-slate-800">
                   Measurement Queue ({rows.length} {rows.length === 1 ? 'item' : 'items'})
-                </h2>
+                </h3>
               </div>
 
               {/* Action Buttons: Add Row & Reset */}
@@ -288,10 +251,10 @@ export function GeneratorHome({ onLogout }) {
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/80 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">
                     <th className="py-3 px-3 w-10 text-center">#</th>
-                    <th className="py-3 px-3 min-w-[135px]">Blind Type</th>
+                    <th className="py-3 px-3 min-w-[140px]">Blind Type</th>
                     <th className="py-3 px-3 w-28">Width (mm)</th>
                     <th className="py-3 px-3 w-28">Drop (mm)</th>
-                    <th className="py-3 px-3 min-w-[110px]">Fabric</th>
+                    <th className="py-3 px-3 min-w-[120px]">Fabric</th>
                     <th className="py-3 px-3 text-center min-w-[140px]">Options</th>
                     <th className="py-3 px-3 w-10 text-center">Del</th>
                   </tr>
@@ -565,8 +528,8 @@ export function GeneratorHome({ onLogout }) {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </section>
   );
 }
 

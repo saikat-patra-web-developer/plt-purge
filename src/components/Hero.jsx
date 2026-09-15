@@ -1,6 +1,14 @@
 import React from 'react';
 
-export function Hero({ onLoginClick }) {
+export function Hero({ onGenerateClick }) {
+  const handleClick = () => {
+    if (onGenerateClick) {
+      onGenerateClick();
+    } else {
+      document.getElementById('generate')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="w-full bg-white py-11 overflow-hidden" id="hero">
       <div className="max-w-[1120px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] items-center gap-7">
@@ -8,60 +16,54 @@ export function Hero({ onLoginClick }) {
         <div className="flex flex-col">
           <h1 className="text-[44px] leading-[1.15] font-extrabold text-slate-900 tracking-[-1.2px] mb-4.5">
             PLT File Generator<br />
-            <span className="font-medium text-slate-900 mr-1">for</span>{' '}
-            <span className="text-[#1967d2] whitespace-nowrap">Blinds Manufacturing</span>
+            for <span className="text-[#1967d2]">Blinds Manufacturing</span>
           </h1>
 
-          <p className="text-[15.5px] leading-[1.55] text-slate-600 max-w-[480px] mb-8">
+          <p className="text-[16px] text-slate-500 font-normal leading-[1.55] max-w-[460px] mb-7">
             Convert your blind measurements into precise PLT files, ready for cutting machines. Fast. Accurate. Reliable.
           </p>
 
-          {/* 3 Feature Highlights in a row */}
-          <div className="flex flex-col sm:flex-row items-start gap-5 mb-8.5">
-            {/* Feature 1: Save Time */}
-            <div className="flex items-start gap-2.5 flex-1">
-              <div className="w-9 h-9 min-w-9 rounded-full bg-[#eaf3fe] flex items-center justify-center text-[#1967d2]">
-                <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          {/* Three Feature Pillars */}
+          <div className="flex items-center gap-6 sm:gap-7 mb-8">
+            {/* Save Time */}
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div className="flex flex-col">
-                <h2 className="text-[13.5px] font-bold text-slate-900 leading-tight mb-0.5">Save Time</h2>
-                <p className="text-[11.5px] text-slate-500 leading-snug">Generate files in seconds</p>
+                <span className="text-[13px] font-bold text-slate-800 leading-tight">Save Time</span>
+                <span className="text-[11.5px] text-slate-400 mt-0.5">Generate files in seconds</span>
               </div>
             </div>
 
-            {/* Feature 2: High Accuracy */}
-            <div className="flex items-start gap-2.5 flex-1">
-              <div className="w-9 h-9 min-w-9 rounded-full bg-[#eaf3fe] flex items-center justify-center text-[#1967d2]">
-                <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            {/* High Accuracy */}
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <circle cx="12" cy="12" r="10" />
                   <circle cx="12" cy="12" r="6" />
-                  <line x1="22" y1="12" x2="18" y2="12" />
-                  <line x1="6" y1="12" x2="2" y2="12" />
-                  <line x1="12" y1="6" x2="12" y2="2" />
-                  <line x1="12" y1="22" x2="12" y2="18" />
+                  <circle cx="12" cy="12" r="2" />
                 </svg>
               </div>
               <div className="flex flex-col">
-                <h2 className="text-[13.5px] font-bold text-slate-900 leading-tight mb-0.5">High Accuracy</h2>
-                <p className="text-[11.5px] text-slate-500 leading-snug">Reduce errors</p>
+                <span className="text-[13px] font-bold text-slate-800 leading-tight">High Accuracy</span>
+                <span className="text-[11.5px] text-slate-400 mt-0.5">Reduce errors</span>
               </div>
             </div>
 
-            {/* Feature 3: Works with Major Cutting Machines */}
-            <div className="flex items-start gap-2.5 flex-1">
-              <div className="w-9 h-9 min-w-9 rounded-full bg-[#eaf3fe] flex items-center justify-center text-[#1967d2]">
-                <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Works with Major Cutting Machines */}
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <circle cx="12" cy="12" r="3" />
                   <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                 </svg>
               </div>
               <div className="flex flex-col">
-                <h2 className="text-[13.5px] font-bold text-slate-900 leading-tight mb-0.5">
-                  Works with Major<br />Cutting Machines
-                </h2>
-                <p className="text-[11.5px] text-slate-500 leading-snug">Compatible & ready to use</p>
+                <span className="text-[13px] font-bold text-slate-800 leading-tight">Works with Major Cutting Machines</span>
+                <span className="text-[11.5px] text-slate-400 mt-0.5">Compatible &amp; ready to use</span>
               </div>
             </div>
           </div>
@@ -71,9 +73,9 @@ export function Hero({ onLoginClick }) {
             <button 
               type="button" 
               className="inline-flex items-center gap-2 bg-[#1967d2] hover:bg-[#1558b8] text-white px-6 py-2.5 rounded-[6px] text-[14.5px] font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-              onClick={onLoginClick}
+              onClick={handleClick}
             >
-              <span>Login to Get Started</span>
+              <span>Generate PLT</span>
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
