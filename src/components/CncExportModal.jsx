@@ -64,9 +64,40 @@ function CuttingWorkspace({ bed, rotated }) {
           </svg>
         </div>
         <aside className="grid border-t border-slate-700 bg-slate-900/80 md:grid-cols-3">
-          <div className="p-4 md:p-5"><p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Material utilization</p><p className="mt-2 text-4xl font-semibold leading-none text-teal-300">{Number(bed.efficiency_percent || 0).toFixed(1)}<span className="text-xl">%</span></p><p className="mt-2 text-xs text-slate-400">{remainingArea.toFixed(3)} m² remaining in this pull</p></div>
-          <div className="border-t border-slate-700 p-4 md:border-l md:border-t-0 md:p-5"><p className="mb-3 flex items-center gap-2 text-sm font-semibold text-white"><MousePointer2 size={14} />{chosen ? `Item #${chosen.item_number}` : 'Inspect a piece'}</p>{chosen ? <div className="space-y-1.5 text-xs text-slate-300"><p>{chosen.location}</p><p>{mm(chosen.width)} × {mm(chosen.drop)} mm</p><p className="text-slate-400">X {mm(chosen.x_pos_mm)} · Y {mm(chosen.y_pos_mm)}</p></div> : <p className="text-xs leading-relaxed text-slate-400">Select a rectangle to see its size and table position.</p>}</div>
-          <div className="border-t border-slate-700 p-4 md:border-l md:border-t-0 md:p-5"><p className="mb-3 text-sm font-semibold text-amber-300">Remaining fabric · {bed.remnants.length} {bed.remnants.length === 1 ? 'region' : 'regions'}</p><div className="space-y-1.5">{bed.remnants.map((item) => <p key={item.id} className="text-xs text-slate-300"><span className="mr-2 font-semibold text-amber-300">R{item.id}</span>{mm(item.width)} × {mm(item.drop)} mm</p>)}</div></div>
+          <div className="px-3 py-2 md:px-3.5 md:py-2.5">
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">Material utilization</p>
+            <p className="mt-0.5 text-lg font-bold leading-none text-teal-300">
+              {Number(bed.efficiency_percent || 0).toFixed(1)}<span className="ml-0.5 text-xs font-medium">%</span>
+            </p>
+            <p className="mt-0.5 text-[10px] text-slate-400">{remainingArea.toFixed(3)} m² remaining in this pull</p>
+          </div>
+          <div className="border-t border-slate-700 px-3 py-2 md:border-l md:border-t-0 md:px-3.5 md:py-2.5">
+            <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-white">
+              <MousePointer2 size={12} />{chosen ? `Item #${chosen.item_number}` : 'Inspect a piece'}
+            </p>
+            {chosen ? (
+              <div className="space-y-0.5 text-[10px] text-slate-300">
+                <p>{chosen.location}</p>
+                <p>{mm(chosen.width)} × {mm(chosen.drop)} mm</p>
+                <p className="text-slate-400">X {mm(chosen.x_pos_mm)} · Y {mm(chosen.y_pos_mm)}</p>
+              </div>
+            ) : (
+              <p className="text-[10px] leading-snug text-slate-400">Select a rectangle to see its size and table position.</p>
+            )}
+          </div>
+          <div className="border-t border-slate-700 px-3 py-2 md:border-l md:border-t-0 md:px-3.5 md:py-2.5">
+            <p className="mb-1 text-[11px] font-semibold text-amber-300">
+              Remaining fabric · {bed.remnants.length} {bed.remnants.length === 1 ? 'region' : 'regions'}
+            </p>
+            <div className="space-y-0.5">
+              {bed.remnants.map((item) => (
+                <p key={item.id} className="text-[10px] text-slate-300">
+                  <span className="mr-1 font-semibold text-amber-300">R{item.id}</span>
+                  {mm(item.width)} × {mm(item.drop)} mm
+                </p>
+              ))}
+            </div>
+          </div>
         </aside>
       </div>
     </div>

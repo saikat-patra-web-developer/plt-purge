@@ -40,3 +40,15 @@ button:disabled,
 [role='button'][aria-disabled='true'] {
   cursor: not-allowed;
 }
+
+/* Keep numeric fields clean and consistent across browsers. */
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
