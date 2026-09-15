@@ -70,12 +70,6 @@ export function GeneratorHome() {
     document.getElementById('cnc-export-workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Quick stats
-  const totalWidth = rows.reduce((sum, r) => sum + (Number(r.width) || 0), 0);
-  const totalDrop = rows.reduce((sum, r) => sum + (Number(r.drop) || 0), 0);
-  const avgWidth = rows.length ? Math.round(totalWidth / rows.length) : 0;
-  const avgDrop = rows.length ? Math.round(totalDrop / rows.length) : 0;
-
   return (
     <section id="generate" className="flex-1 w-full bg-slate-50 border-t border-slate-200 py-10 md:py-12 text-slate-900">
       <div className="max-w-[1280px] w-full mx-auto px-6">
@@ -94,24 +88,16 @@ export function GeneratorHome() {
             </p>
           </div>
 
-          {/* Quick Metrics Bar */}
-          <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-xl shadow-xs">
-            <div className="px-3 py-1 text-center border-r border-slate-100">
-              <span className="text-[11px] font-bold uppercase text-slate-400 block">Blinds Count</span>
-              <span className="text-base font-extrabold text-[#1967d2]">{rows.length}</span>
-            </div>
-            <div className="px-3 py-1 text-center border-r border-slate-100">
-              <span className="text-[11px] font-bold uppercase text-slate-400 block">Avg Width</span>
-              <span className="text-base font-bold text-slate-700">{avgWidth} mm</span>
-            </div>
-            <div className="px-3 py-1 text-center">
-              <span className="text-[11px] font-bold uppercase text-slate-400 block">Avg Drop</span>
-              <span className="text-base font-bold text-slate-700">{avgDrop} mm</span>
-            </div>
-          </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(360px,0.8fr)_minmax(0,1.4fr)]">
+        <div className="mt-6">
+          <CncExportModal
+            rows={rows}
+            maxBedDrop={Number(maxBedDrop)}
+            maxBedWidth={Number(maxBedWidth)}
+            onMaxBedDropChange={setMaxBedDrop}
+            onMaxBedWidthChange={setMaxBedWidth}
+          >
           {/* Measurements Table & Actions */}
           <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
             {/* Table Header Bar */}
@@ -273,14 +259,7 @@ export function GeneratorHome() {
             </div>
           </div>
 
-          <CncExportModal
-            rows={rows}
-            maxBedDrop={Number(maxBedDrop)}
-            maxBedWidth={Number(maxBedWidth)}
-            onMaxBedDropChange={setMaxBedDrop}
-            onMaxBedWidthChange={setMaxBedWidth}
-          />
-
+          </CncExportModal>
         </div>
       </div>
     </section>
