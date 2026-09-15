@@ -3,6 +3,7 @@ import { Download, Grid2X2, Maximize2, Minus, MousePointer2, Plus, Sparkles } fr
 import JSZip from 'jszip';
 import { optimizeBedRuns } from '../utils/bedOptimizer';
 import { downloadPlt, generateBedPlt } from '../utils/xiaoPlt';
+import { downloadDxf, generateBedDxf } from '../utils/xiaoDxf';
 
 const palette = ['#2dd4bf', '#60a5fa', '#c084fc', '#fbbf24', '#fb7185', '#a3e635'];
 const mm = (value) => Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
@@ -82,7 +83,9 @@ export default function CncExportModal({ rows, maxBedDrop, maxBedWidth, onMaxBed
   const wastePercent = optimization.total_fabric_m2 ? optimization.waste_area_m2 / optimization.total_fabric_m2 * 100 : 0;
 
   const bedFilename = (run) => `PURGE_Bed-${run.bed_number}_DropX-${Math.round(run.dynamic_drop_mm)}mm_WidthY-${Math.round(run.used_width_mm)}mm.plt`;
+  const dxfFilename = (run) => bedFilename(run).replace(/\.plt$/i, '.dxf');
   const saveBed = (run) => downloadPlt(bedFilename(run), generateBedPlt(run, { pen: 1, origin: 0, rotated }));
+  const saveBedDxf = (run) => downloadDxf(dxfFilename(run), generateBedDxf(run, { rotated }));
 
   const downloadAllBedsZip = async () => {
     if (isZipping || !optimization.bed_runs.length) return;
@@ -91,6 +94,7 @@ export default function CncExportModal({ rows, maxBedDrop, maxBedWidth, onMaxBed
       const zip = new JSZip();
       optimization.bed_runs.forEach((run) => {
         zip.file(bedFilename(run), generateBedPlt(run, { pen: 1, origin: 0, rotated }));
+        zip.file(dxfFilename(run), generateBedDxf(run, { rotated }));
       });
       const blob = await zip.generateAsync({
         type: 'blob',
@@ -121,10 +125,11 @@ export default function CncExportModal({ rows, maxBedDrop, maxBedWidth, onMaxBed
       <div className="grid grid-cols-1 items-start gap-4 bg-slate-50 p-3 lg:grid-cols-2">
         <div className="min-w-0">{children}</div>
         <div className="min-w-0 overflow-hidden rounded-xl border border-sky-200/80 bg-sky-50/75 backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-emerald-200 bg-emerald-50 px-4 py-2.5"><div className="flex items-center gap-2 text-xs font-black text-slate-900"><Sparkles size={18} className="text-emerald-600" /> CNC Table Bed Optimization (All {rows.length} Windows)</div><button type="button" disabled={isZipping || !optimization.bed_runs.length} onClick={downloadAllBedsZip} className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"><Download size={13} />{isZipping ? 'Zipping...' : `All Bed PLTs (.zip) (${optimization.bed_runs.length})`}</button></div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2.5"><div className="flex min-w-0 items-center gap-2 text-xs font-black text-slate-900"><Sparkles size={18} className="shrink-0 text-emerald-600" /><span>CNC Table Bed Optimization (All {rows.length} Windows)</span></div><button type="button" disabled={isZipping || !optimization.bed_runs.length} onClick={downloadAllBedsZip} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"><Download size={13} />{isZipping ? 'Zipping...' : `All PLT + DXF (.zip) (${optimization.bed_runs.length})`}</button></div>
           <div className="p-4">
-            {optimization.bed_runs.length > 1 && <div className="mb-3 flex flex-wrap gap-2">{optimization.bed_runs.map((run, index) => <button type="button" key={run.bed_number} onClick={() => setActiveRun(index)} className={`rounded-lg border px-3 py-1.5 text-xs font-bold cursor-pointer ${activeRun === index ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 text-slate-600'}`}>Run {run.bed_number}</button>)}</div>}
-            {bed ? <><div className="mb-3 flex items-center justify-between"><span className="text-xs font-bold text-slate-600">CNC Table Bed Runs ({optimization.bed_runs.length})</span><button type="button" onClick={() => saveBed(bed)} className="inline-flex items-center gap-1.5 rounded-lg border border-teal-300 px-3 py-1.5 text-xs font-bold text-teal-700 cursor-pointer"><Download size={12} />Download Run {bed.bed_number} PLT</button></div><CuttingWorkspace bed={bed} rotated={rotated} /></> : <div className="py-16 text-center text-sm text-slate-500">No valid windows fit within the configured bed.</div>}
+            <div className="mb-3 rounded-lg border border-teal-100 bg-teal-50/70 px-3 py-2 text-[11px] text-slate-600"><strong className="text-teal-900">Lowest pull among evaluated layouts</strong><span className="ml-2">{optimization.bed_runs.length} bed runs · {optimization.waste_area_m2.toFixed(3)} m² remaining · Grain direction locked</span></div>
+            {optimization.bed_runs.length > 1 && <div className="mb-3 flex flex-wrap gap-2">{optimization.bed_runs.map((run, index) => <button type="button" key={run.bed_number} onClick={() => setActiveRun(index)} className={`rounded-lg border px-3 py-1.5 text-xs font-bold cursor-pointer ${activeRun === index ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 text-slate-600'}`}>Run {run.bed_number} <span className="ml-1 opacity-70">{run.cuts.length} pcs</span></button>)}</div>}
+            {bed ? <><div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="min-w-0 text-xs text-slate-600"><strong className="text-sm text-slate-900">CNC Bed Run #{bed.bed_number}</strong><span className="ml-1">({mm(bed.linear_pull_mm)} mm pull / {(Number(bed.linear_pull_mm) / 1000).toFixed(3)} m)</span><div className="mt-1 font-semibold text-teal-800">Drop X: {mm(bed.linear_pull_mm)} mm (≤{mm(bed.max_bed_drop_mm)} mm) · Width Y: {mm(bed.used_width_mm)} / {mm(bed.roll_width_mm)} mm · Remainder: {mm(Math.max(0, bed.roll_width_mm - bed.used_width_mm))} mm</div></div><div className="flex shrink-0 flex-wrap gap-2"><button type="button" onClick={() => saveBed(bed)} className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white cursor-pointer"><Download size={12} />PLT</button><button type="button" onClick={() => saveBedDxf(bed)} className="inline-flex items-center gap-1.5 rounded-lg border border-teal-300 bg-white px-3 py-1.5 text-xs font-bold text-teal-700 cursor-pointer"><Download size={12} />DXF</button></div></div><CuttingWorkspace bed={bed} rotated={rotated} /></> : <div className="py-16 text-center text-sm text-slate-500">No valid windows fit within the configured bed.</div>}
           </div>
         </div>
       </div>

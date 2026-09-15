@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { optimizeBedRuns } from './bedOptimizer.js';
 import { generateBedPlt } from './xiaoPlt.js';
+import { generateBedDxf } from './xiaoDxf.js';
 
 function validate(plan, expectedCount) {
   assert.equal(plan.bed_runs.reduce((sum, bed) => sum + bed.cuts.length, 0), expectedCount);
@@ -47,4 +48,12 @@ test('PLT preserves QMB X=drop and Y=width coordinates at 40 units/mm', () => {
   const content = generateBedPlt({ cuts: [{ width: 900, drop: 980, x_pos_mm: 990, y_pos_mm: 1940 }] });
   assert.ok(content.includes('PU39600 77600;'));
   assert.ok(content.includes('PD78800 113600;'));
+});
+
+test('DXF exports cut rectangles in millimetres', () => {
+  const content = generateBedDxf({ cuts: [{ width: 900, drop: 980, x_pos_mm: 990, y_pos_mm: 1940 }] });
+  assert.ok(content.includes('$INSUNITS\r\n70\r\n4'));
+  assert.ok(content.includes('10\r\n990\r\n20\r\n1940'));
+  assert.ok(content.includes('11\r\n1970\r\n21\r\n1940'));
+  assert.ok(content.endsWith('0\r\nEOF\r\n'));
 });

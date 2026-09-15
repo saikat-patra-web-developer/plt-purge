@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Cpu } from 'lucide-react';
+import { AlertTriangle, Cpu, RotateCcw, X } from 'lucide-react';
 import CncExportModal from './CncExportModal';
 
 export function GeneratorHome() {
@@ -15,6 +15,7 @@ export function GeneratorHome() {
   const [rows, setRows] = useState(initialRows);
   const [maxBedDrop, setMaxBedDrop] = useState(3000);
   const [maxBedWidth, setMaxBedWidth] = useState(3000);
+  const [popup, setPopup] = useState(null);
   const nextWindowNumber = useRef(2);
 
   // Add new row
@@ -32,17 +33,20 @@ export function GeneratorHome() {
 
   // Reset rows back to default initial state
   const handleReset = () => {
-    if (window.confirm('Reset all blind measurements back to default?')) {
-      setRows([
-        {
-          id: 1,
-          location: 'Window 1',
-          width: 1200,
-          drop: 1500
-        }
-      ]);
-      nextWindowNumber.current = 2;
-    }
+    setPopup('reset');
+  };
+
+  const confirmReset = () => {
+    setRows([
+      {
+        id: 1,
+        location: 'Window 1',
+        width: 1200,
+        drop: 1500
+      }
+    ]);
+    nextWindowNumber.current = 2;
+    setPopup(null);
   };
 
   // Update a single field in a row
@@ -53,7 +57,7 @@ export function GeneratorHome() {
   // Delete a row
   const handleDeleteRow = (id) => {
     if (rows.length === 1) {
-      alert('You must have at least one blind in the batch.');
+      setPopup('minimum-row');
       return;
     }
     const updated = rows.filter(r => r.id !== id);
@@ -246,6 +250,25 @@ export function GeneratorHome() {
           </CncExportModal>
         </div>
       </div>
+
+      {popup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm" role="presentation" onMouseDown={() => setPopup(null)}>
+          <div className="w-full max-w-sm rounded-2xl border border-sky-200 bg-white p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="measurement-popup-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4">
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${popup === 'reset' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
+                {popup === 'reset' ? <RotateCcw size={20} /> : <AlertTriangle size={20} />}
+              </div>
+              <button type="button" onClick={() => setPopup(null)} className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer" aria-label="Close popup"><X size={18} /></button>
+            </div>
+            <h3 id="measurement-popup-title" className="mt-4 text-lg font-black text-slate-900">{popup === 'reset' ? 'Reset measurement table?' : 'One row is required'}</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{popup === 'reset' ? 'This will remove the current measurements and restore the default first row.' : 'The measurement queue must contain at least one window. Add another row before deleting this one.'}</p>
+            <div className="mt-5 flex justify-end gap-2">
+              {popup === 'reset' && <button type="button" onClick={() => setPopup(null)} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer">Cancel</button>}
+              <button type="button" onClick={popup === 'reset' ? confirmReset : () => setPopup(null)} className={`rounded-lg px-4 py-2 text-sm font-bold text-white transition-colors cursor-pointer ${popup === 'reset' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-teal-600 hover:bg-teal-700'}`}>{popup === 'reset' ? 'Reset table' : 'Got it'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
