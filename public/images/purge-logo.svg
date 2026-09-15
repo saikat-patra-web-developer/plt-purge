@@ -1,0 +1,30 @@
+<svg viewBox="0 0 170 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="slat1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e40af" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="slat2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+    <linearGradient id="slat3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+  <!-- 3 Slats / Bars -->
+  <rect x="0" y="8" width="34" height="6.5" rx="2" fill="url(#slat1)" />
+  <rect x="0" y="17.5" width="38" height="6.5" rx="2" fill="url(#slat2)" />
+  <rect x="0" y="27" width="30" height="6.5" rx="2" fill="url(#slat3)" />
+  
+  <!-- Text Purge -->
+  <text x="44" y="27.5" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="28" fill="#09090b" letter-spacing="-0.5px">Purge</text>
+  
+  <!-- Registered Symbol -->
+  <circle cx="127" cy="11.5" r="3.8" stroke="#475569" stroke-width="0.8" fill="none" />
+  <text x="127" y="13.8" font-family="'Inter', sans-serif" font-size="5" font-weight="700" fill="#475569" text-anchor="middle">R</text>
+  
+  <!-- Subtitle WHOLESALE BLINDS -->
+  <text x="45" y="38" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="6.8" fill="#475569" letter-spacing="2.2px">WHOLESALE BLINDS</text>
+</svg>
