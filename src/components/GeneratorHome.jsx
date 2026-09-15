@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Cpu, RotateCcw, X } from 'lucide-react';
 import CncExportModal from './CncExportModal';
 
@@ -16,19 +16,33 @@ export function GeneratorHome() {
   const [maxBedDrop, setMaxBedDrop] = useState(3000);
   const [maxBedWidth, setMaxBedWidth] = useState(3000);
   const [popup, setPopup] = useState(null);
+  const pendingWidthFocus = useRef(null);
   const nextWindowNumber = useRef(2);
+  const widthInputs = useRef(new Map());
+
+  useEffect(() => {
+    if (pendingWidthFocus.current === null) return;
+    widthInputs.current.get(pendingWidthFocus.current)?.focus();
+    pendingWidthFocus.current = null;
+  }, [rows]);
 
   // Add new row
   const handleAddRow = () => {
+    const hasBlankMeasurement = rows.some((row) => row.width === '' || row.drop === '');
+    if (hasBlankMeasurement) {
+      setPopup('incomplete-row');
+      return;
+    }
     const newId = Date.now();
     const newRow = {
       id: newId,
       location: `Window ${nextWindowNumber.current}`,
-      width: 1000,
-      drop: 1200
+      width: '',
+      drop: ''
     };
     nextWindowNumber.current += 1;
     setRows(prevRows => [...prevRows, newRow]);
+    pendingWidthFocus.current = newId;
   };
 
   // Reset rows back to default initial state
@@ -174,6 +188,10 @@ export function GeneratorHome() {
                         {/* Width */}
                         <td className="py-3 px-3">
                           <input
+                            ref={(element) => {
+                              if (element) widthInputs.current.set(row.id, element);
+                              else widthInputs.current.delete(row.id);
+                            }}
                             type="number"
                             min="200"
                             max={maxBedWidth || undefined}
@@ -260,8 +278,8 @@ export function GeneratorHome() {
               </div>
               <button type="button" onClick={() => setPopup(null)} className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer" aria-label="Close popup"><X size={18} /></button>
             </div>
-            <h3 id="measurement-popup-title" className="mt-4 text-lg font-black text-slate-900">{popup === 'reset' ? 'Reset measurement table?' : 'One row is required'}</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{popup === 'reset' ? 'This will remove the current measurements and restore the default first row.' : 'The measurement queue must contain at least one window. Add another row before deleting this one.'}</p>
+            <h3 id="measurement-popup-title" className="mt-4 text-lg font-black text-slate-900">{popup === 'reset' ? 'Reset measurement table?' : popup === 'incomplete-row' ? 'Complete the current row' : 'One row is required'}</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{popup === 'reset' ? 'This will remove the current measurements and restore the default first row.' : popup === 'incomplete-row' ? 'Enter both Width and Drop for every window before adding another row.' : 'The measurement queue must contain at least one window. Add another row before deleting this one.'}</p>
             <div className="mt-5 flex justify-end gap-2">
               {popup === 'reset' && <button type="button" onClick={() => setPopup(null)} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer">Cancel</button>}
               <button type="button" onClick={popup === 'reset' ? confirmReset : () => setPopup(null)} className={`rounded-lg px-4 py-2 text-sm font-bold text-white transition-colors cursor-pointer ${popup === 'reset' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-teal-600 hover:bg-teal-700'}`}>{popup === 'reset' ? 'Reset table' : 'Got it'}</button>
