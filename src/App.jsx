@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import BlindsIndustry from './components/BlindsIndustry';
@@ -9,34 +9,55 @@ import Footer from './components/Footer';
 import './App.css';
 
 function App() {
-  const scrollToGenerate = () => {
-    document.getElementById('generate')?.scrollIntoView({ behavior: 'smooth' });
+  const [currentPath, setCurrentPath] = useState(() => {
+    // Normalise pathname (treat empty or root as '/')
+    return window.location.pathname || '/';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname || '/');
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigate = (path) => {
+    window.history.pushState({}, '', path);
+    setCurrentPath(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const isGeneratePage = currentPath === '/generate' || currentPath.startsWith('/generate');
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-white overflow-x-hidden">
-      {/* Top Navigation */}
-      <Navbar onGenerateClick={scrollToGenerate} />
+      {/* Header (Navbar with Purge logo and navigation controls) */}
+      <Navbar currentPath={currentPath} onNavigate={navigate} />
 
-      {/* Main Content */}
-      <main>
-        {/* Hero Section */}
-        <Hero onGenerateClick={scrollToGenerate} />
-
-        {/* Built for the Blinds Industry */}
-        <BlindsIndustry />
-
-        {/* How It Works */}
-        <HowItWorks />
-
-        {/* Dedicated PLT Generator Section */}
+      {/* Route Content */}
+      {isGeneratePage ? (
+        /* /generate route: Displays Batch Blind Measurements with Header & Footer */
         <GeneratorHome />
+      ) : (
+        /* / landing route: Full homepage with Hero, Features, How It Works, CTA */
+        <main>
+          {/* Hero Section */}
+          <Hero onGenerateClick={() => navigate('/generate')} />
 
-        {/* Ready to Streamline Your Production */}
-        <StreamlineCta onGenerateClick={scrollToGenerate} />
-      </main>
+          {/* Built for the Blinds Industry */}
+          <BlindsIndustry />
 
-      {/* Footer */}
+          {/* How It Works */}
+          <HowItWorks />
+
+          {/* Ready to Streamline Your Production */}
+          <StreamlineCta onGenerateClick={() => navigate('/generate')} />
+        </main>
+      )}
+
+      {/* Footer (Consistent on all pages) */}
       <Footer />
     </div>
   );

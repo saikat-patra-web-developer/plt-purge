@@ -142,7 +142,7 @@ export function GeneratorHome() {
   const avgDrop = rows.length ? Math.round(totalDrop / rows.length) : 0;
 
   return (
-    <section id="generate" className="w-full bg-slate-50 border-t border-slate-200 py-12 text-slate-900 scroll-mt-14">
+    <section id="generate" className="flex-1 w-full bg-slate-50 border-t border-slate-200 py-10 md:py-12 text-slate-900">
       <div className="max-w-[1280px] w-full mx-auto px-6">
         {/* Section Title & Stats */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
