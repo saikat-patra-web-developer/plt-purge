@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Cpu, Download, Grid2X2, Maximize2, Minus, MousePointer2, Plus, Sparkles, X } from 'lucide-react';
+import { Cpu, Download, Grid2X2, Maximize2, Minus, MousePointer2, Plus, Sparkles } from 'lucide-react';
 import { optimizeBedRuns } from '../utils/bedOptimizer';
 import { downloadPlt, generateBedPlt } from '../utils/xiaoPlt';
 
@@ -71,38 +71,33 @@ function CuttingWorkspace({ bed, rotated }) {
   );
 }
 
-export default function CncExportModal({ isOpen, onClose, rows, maxBedDrop, maxBedWidth }) {
+export default function CncExportModal({ rows, maxBedDrop, maxBedWidth, onMaxBedDropChange, onMaxBedWidthChange }) {
   const [axisMode, setAxisMode] = useState('table_dxw');
   const [origin, setOrigin] = useState(0);
   const [pen, setPen] = useState(1);
   const [activeRun, setActiveRun] = useState(0);
-  const [bedDrop, setBedDrop] = useState(maxBedDrop);
-  const [bedWidth, setBedWidth] = useState(maxBedWidth);
-  const optimization = useMemo(() => optimizeBedRuns(rows, bedDrop, bedWidth), [rows, bedDrop, bedWidth]);
+  const optimization = useMemo(() => optimizeBedRuns(rows, maxBedDrop, maxBedWidth), [rows, maxBedDrop, maxBedWidth]);
   const rotated = axisMode === 'table_wxd';
   const bed = optimization.bed_runs[activeRun] || optimization.bed_runs[0];
   const wastePercent = optimization.total_fabric_m2 ? optimization.waste_area_m2 / optimization.total_fabric_m2 * 100 : 0;
 
-  if (!isOpen) return null;
   const saveBed = (run) => downloadPlt(`PURGE_Bed-${run.bed_number}_DropX-${Math.round(run.dynamic_drop_mm)}mm_WidthY-${Math.round(run.used_width_mm)}mm.plt`, generateBedPlt(run, { pen, origin, rotated }));
 
-  return <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-3 backdrop-blur-xs" onClick={onClose}>
-    <div role="dialog" aria-modal="true" aria-label="CNC cutting export" className="flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-5 py-4"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white"><Cpu size={20} /></div><div><h3 className="text-lg font-black text-slate-900">CNC &amp; CAD Cutting Export</h3><p className="text-xs text-slate-500">Xiao-compatible cutting workspace</p></div></div><button type="button" onClick={onClose} aria-label="Close CNC cutting export" className="rounded-xl p-2 text-slate-400 hover:bg-slate-200"><X size={18} /></button></div>
+  return <div id="cnc-export-workspace" className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-5 py-4"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white"><Cpu size={20} /></div><div><h3 className="text-lg font-black text-slate-900">CNC &amp; CAD Cutting Export</h3><p className="text-xs text-slate-500">Xiao-compatible cutting workspace</p></div></div></div>
       <div className="flex flex-wrap items-center gap-4 border-b border-slate-200 px-5 py-3 text-xs">
         <label className="flex items-center gap-1.5 text-slate-500">Table Axis Mode:<select value={axisMode} onChange={(event) => setAxisMode(event.target.value)} className="rounded-lg border border-teal-300 bg-teal-50 px-2 py-1 font-black text-teal-900"><option value="table_dxw">CNC Table (X=Drop, Y=Width)</option><option value="table_wxd">Rotated (X=Width, Y=Drop)</option></select></label>
-        <label className="flex items-center gap-1.5 text-slate-500">Max Bed Drop (X):<input type="number" min="500" max="8000" step="100" value={bedDrop} onChange={(event) => { setBedDrop(Math.max(500, Number(event.target.value) || 3000)); setActiveRun(0); }} className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center font-black text-slate-800" /><span className="text-[11px] font-bold text-slate-400">mm</span><button type="button" onClick={() => { setBedDrop(3200); setActiveRun(0); }} className={`rounded border px-1.5 py-0.5 text-[10px] font-extrabold ${bedDrop === 3200 ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>3200</button><button type="button" onClick={() => { setBedDrop(3000); setActiveRun(0); }} className={`rounded border px-1.5 py-0.5 text-[10px] font-extrabold ${bedDrop === 3000 ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>3000</button></label>
-        <label className="flex items-center gap-1.5 text-slate-500">Max Bed Width (Y):<input type="number" min="500" max="8000" step="100" value={bedWidth} onChange={(event) => { setBedWidth(Math.max(500, Number(event.target.value) || 3000)); setActiveRun(0); }} className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center font-black text-slate-800" /><span className="text-[11px] font-bold text-slate-400">mm</span></label>
+        <label className="flex items-center gap-1.5 text-slate-500">Max Bed Drop (X):<input type="number" min="500" max="8000" step="100" value={maxBedDrop} onChange={(event) => { onMaxBedDropChange(Math.max(500, Number(event.target.value) || 3000)); setActiveRun(0); }} className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center font-black text-slate-800" /><span className="text-[11px] font-bold text-slate-400">mm</span><button type="button" onClick={() => { onMaxBedDropChange(3200); setActiveRun(0); }} className={`rounded border px-1.5 py-0.5 text-[10px] font-extrabold ${maxBedDrop === 3200 ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>3200</button><button type="button" onClick={() => { onMaxBedDropChange(3000); setActiveRun(0); }} className={`rounded border px-1.5 py-0.5 text-[10px] font-extrabold ${maxBedDrop === 3000 ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>3000</button></label>
+        <label className="flex items-center gap-1.5 text-slate-500">Max Bed Width (Y):<input type="number" min="500" max="8000" step="100" value={maxBedWidth} onChange={(event) => { onMaxBedWidthChange(Math.max(500, Number(event.target.value) || 3000)); setActiveRun(0); }} className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center font-black text-slate-800" /><span className="text-[11px] font-bold text-slate-400">mm</span></label>
         <label className="flex items-center gap-1.5 text-slate-500">Origin:<select value={origin} onChange={(event) => setOrigin(Number(event.target.value))} className="rounded-lg border border-slate-300 px-2 py-1 font-bold text-slate-700"><option value="0">0 mm (Table Origin)</option><option value="5">5 mm Margin</option><option value="10">10 mm Margin</option><option value="20">20 mm Margin</option></select></label>
         <label className="flex items-center gap-1.5 text-slate-500">Head Tool:<select value={pen} onChange={(event) => setPen(Number(event.target.value))} className="rounded-lg border border-slate-300 px-2 py-1 font-bold text-slate-700"><option value="1">Pen 1 (Head 1 Knife)</option><option value="2">Pen 2 (Head 2)</option><option value="8">Pen 8 (Marker)</option></select></label>
         <div className="ml-auto flex gap-2"><div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1 text-center"><span className="block text-[9px] font-bold uppercase text-blue-600">Total Pull</span><strong>{optimization.total_linear_m.toFixed(3)} m</strong></div><div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1 text-center"><span className="block text-[9px] font-bold uppercase text-amber-700">Remaining Fabric</span><strong>{optimization.waste_area_m2.toFixed(3)} m²</strong> <small>({wastePercent.toFixed(1)}%)</small></div></div>
       </div>
       {optimization.unplaced_cuts.length > 0 && <div className="border-b border-rose-200 bg-rose-50 px-5 py-2 text-xs text-rose-800">{optimization.unplaced_cuts.map((cut) => <p key={cut.id}><strong>{cut.location}:</strong> {cut.reason}</p>)}</div>}
       <div className="flex items-center justify-between border-b border-emerald-200 bg-emerald-50 px-5 py-2.5"><div className="flex items-center gap-2 text-xs font-black text-slate-900"><Sparkles size={18} className="text-emerald-600" /> CNC Table Bed Optimization (All {rows.length} Windows)</div><button type="button" disabled={!optimization.bed_runs.length} onClick={() => optimization.bed_runs.forEach((run, index) => setTimeout(() => saveBed(run), index * 150))} className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-50"><Download size={13} />All Bed PLTs ({optimization.bed_runs.length})</button></div>
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className="p-5">
         {optimization.bed_runs.length > 1 && <div className="mb-3 flex flex-wrap gap-2">{optimization.bed_runs.map((run, index) => <button type="button" key={run.bed_number} onClick={() => setActiveRun(index)} className={`rounded-lg border px-3 py-1.5 text-xs font-bold ${activeRun === index ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-200 text-slate-600'}`}>Run {run.bed_number}</button>)}</div>}
         {bed ? <><div className="mb-3 flex items-center justify-between"><span className="text-xs font-bold text-slate-600">CNC Table Bed Runs ({optimization.bed_runs.length})</span><button type="button" onClick={() => saveBed(bed)} className="inline-flex items-center gap-1.5 rounded-lg border border-teal-300 px-3 py-1.5 text-xs font-bold text-teal-700"><Download size={12} />Download Run {bed.bed_number} PLT</button></div><CuttingWorkspace bed={bed} rotated={rotated} /></> : <div className="py-16 text-center text-sm text-slate-500">No valid windows fit within the configured bed.</div>}
       </div>
-    </div>
   </div>;
 }

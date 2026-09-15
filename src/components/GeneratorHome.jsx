@@ -12,8 +12,6 @@ export function GeneratorHome() {
   ];
 
   const [rows, setRows] = useState(initialRows);
-  const [selectedRowId, setSelectedRowId] = useState(1);
-  const [isExportOpen, setIsExportOpen] = useState(false);
   const [maxBedDrop, setMaxBedDrop] = useState(3000);
   const [maxBedWidth, setMaxBedWidth] = useState(3000);
   const nextWindowNumber = useRef(2);
@@ -29,7 +27,6 @@ export function GeneratorHome() {
     };
     nextWindowNumber.current += 1;
     setRows(prevRows => [...prevRows, newRow]);
-    setSelectedRowId(newId);
   };
 
   // Reset rows back to default initial state
@@ -44,7 +41,6 @@ export function GeneratorHome() {
         }
       ]);
       nextWindowNumber.current = 2;
-      setSelectedRowId(1);
     }
   };
 
@@ -61,12 +57,9 @@ export function GeneratorHome() {
     }
     const updated = rows.filter(r => r.id !== id);
     setRows(updated);
-    if (selectedRowId === id) {
-      setSelectedRowId(updated[0].id);
-    }
   };
 
-  const handleOpenExport = () => {
+  const handleViewExport = () => {
     const bedDrop = Number(maxBedDrop);
     const bedWidth = Number(maxBedWidth);
 
@@ -74,10 +67,8 @@ export function GeneratorHome() {
       window.alert('Enter valid maximum bed dimensions before opening the cutting workspace.');
       return;
     }
-    setIsExportOpen(true);
+    document.getElementById('cnc-export-workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-
-  const selectedWindow = rows.find(r => r.id === selectedRowId) || rows[0];
 
   // Quick stats
   const totalWidth = rows.reduce((sum, r) => sum + (Number(r.width) || 0), 0);
@@ -120,53 +111,8 @@ export function GeneratorHome() {
           </div>
         </div>
 
-        {/* Xiao cutting-bed limits */}
-        <div className="mb-6 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-xs">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="flex-1">
-              <label htmlFor="max-bed-drop" className="mb-1.5 block text-xs font-bold text-slate-700">
-                Max Bed Drop (X)
-              </label>
-              <div className="relative">
-                <input
-                  id="max-bed-drop"
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={maxBedDrop}
-                  onChange={(event) => setMaxBedDrop(event.target.value)}
-                  className="w-full rounded-[6px] border border-slate-300 bg-white px-3.5 py-2.5 pr-12 text-sm font-bold text-slate-900 outline-none transition-all focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
-                />
-                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400">mm</span>
-              </div>
-            </div>
-
-            <div className="flex-1">
-              <label htmlFor="max-bed-width" className="mb-1.5 block text-xs font-bold text-slate-700">
-                Max Bed Width (Y)
-              </label>
-              <div className="relative">
-                <input
-                  id="max-bed-width"
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={maxBedWidth}
-                  onChange={(event) => setMaxBedWidth(event.target.value)}
-                  className="w-full rounded-[6px] border border-slate-300 bg-white px-3.5 py-2.5 pr-12 text-sm font-bold text-slate-900 outline-none transition-all focus:border-[#1967d2] focus:ring-1 focus:ring-[#1967d2]"
-                />
-                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400">mm</span>
-              </div>
-            </div>
-
-            <div className="rounded-[6px] bg-blue-50 px-3.5 py-2.5 text-xs font-semibold text-[#1967d2]">
-              Xiao PLT bed limits
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-6 items-start">
-          {/* Left Column: Measurements Table & Actions */}
+        <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(360px,0.8fr)_minmax(0,1.4fr)]">
+          {/* Measurements Table & Actions */}
           <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
             {/* Table Header Bar */}
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -220,14 +166,10 @@ export function GeneratorHome() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm">
                   {rows.map((row, index) => {
-                    const isSelected = row.id === selectedRowId;
                     return (
                       <tr
                         key={row.id}
-                        onClick={() => setSelectedRowId(row.id)}
-                        className={`transition-colors cursor-pointer ${
-                          isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50/60'
-                        }`}
+                        className="transition-colors hover:bg-slate-50/60"
                       >
                         {/* Index */}
                         <td className="py-3 px-3 text-center font-bold text-xs text-slate-400">
@@ -317,7 +259,7 @@ export function GeneratorHome() {
               {/* Generate Batch PLT Button */}
               <button
                 type="button"
-                onClick={handleOpenExport}
+                onClick={handleViewExport}
                 disabled={rows.length === 0}
                 className="inline-flex items-center gap-2 bg-[#1967d2] hover:bg-[#1558b8] disabled:opacity-60 text-white px-6 py-2.5 rounded-[6px] text-sm font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
@@ -326,75 +268,21 @@ export function GeneratorHome() {
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <span>Open CNC Export ({rows.length})</span>
+                <span>View CNC Optimization ({rows.length})</span>
               </button>
             </div>
           </div>
 
-          {/* Right Column: Live CAD Preview of Selected Row */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xs flex flex-col">
-            {/* Header */}
-            <div className="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded">
-                  2D CAD PREVIEW
-                </span>
-                <span className="text-xs font-semibold text-slate-300">
-                  {selectedWindow?.location}
-                </span>
-              </div>
-              <span className="text-xs font-mono font-bold text-sky-300">
-                {selectedWindow?.width} &times; {selectedWindow?.drop} mm
-              </span>
-            </div>
+          <CncExportModal
+            rows={rows}
+            maxBedDrop={Number(maxBedDrop)}
+            maxBedWidth={Number(maxBedWidth)}
+            onMaxBedDropChange={setMaxBedDrop}
+            onMaxBedWidthChange={setMaxBedWidth}
+          />
 
-            {/* CAD Grid Simulation */}
-            <div className="p-4 bg-slate-950 flex items-center justify-center min-h-[300px]">
-              <svg className="w-full h-64" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Background coordinate grid */}
-                <defs>
-                  <pattern id="cadSmallGrid" width="16" height="16" patternUnits="userSpaceOnUse">
-                    <path d="M 16 0 L 0 0 0 16" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="0.8" />
-                  </pattern>
-                  <pattern id="cadGrid" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <rect width="80" height="80" fill="url(#cadSmallGrid)" />
-                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="1" />
-                  </pattern>
-                </defs>
-                <rect width="400" height="300" fill="url(#cadGrid)" />
-
-                {/* Main Blind Outline */}
-                <g stroke="#38bdf8" strokeWidth="1.5">
-                  {/* Main Fabric Sheet */}
-                  <rect x="40" y="30" width="220" height="170" rx="2" stroke="#38bdf8" fill="rgba(56, 189, 248, 0.05)" />
-                  <text x="50" y="50" fill="#e2e8f0" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                    {selectedWindow?.location?.toUpperCase()} • {selectedWindow?.width} x {selectedWindow?.drop} mm
-                  </text>
-                </g>
-
-                {/* Cutter Origin Marker */}
-                <circle cx="40" cy="30" r="3.5" fill="#f43f5e" />
-                <text x="48" y="25" fill="#f43f5e" fontSize="9" fontWeight="bold">
-                  (0, 0)
-                </text>
-              </svg>
-            </div>
-
-            {/* Footer Information */}
-            <div className="px-5 py-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-              <span>Machine Spec: <strong>Xiao-compatible HPGL/PLT</strong></span>
-              <span className="text-slate-300 font-mono">Status: Ready to plot</span>
-            </div>
-          </div>
         </div>
       </div>
-      <CncExportModal
-        isOpen={isExportOpen}
-        onClose={() => setIsExportOpen(false)}
-        rows={rows}
-        maxBedDrop={Number(maxBedDrop)}
-        maxBedWidth={Number(maxBedWidth)}
-      />
     </section>
   );
 }
