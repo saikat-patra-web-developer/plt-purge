@@ -17,7 +17,13 @@ function CuttingWorkspace({ bed, rotated, onSavePlt, onSaveDxf }) {
   const orient = (item) => rotated
     ? { x: item.y, y: item.x, drop: item.width, width: item.drop }
     : item;
+  const displayFromBottomLeft = (item) => {
+    const positioned = orient(item);
+    return { ...positioned, y: width - positioned.y - positioned.width };
+  };
   const font = Math.max(length, width) / 42;
+  const originInset = Math.max(8, font * 0.12);
+  const originAxisLength = font * 1.15;
   const chosen = selected === null ? null : bed.cuts[selected];
   const remainingArea = bed.remnants.reduce((sum, remnant) => sum + (Number(remnant.area_m2) || 0), 0);
 
@@ -55,10 +61,16 @@ function CuttingWorkspace({ bed, rotated, onSavePlt, onSaveDxf }) {
               <pattern id={`hatch-${bed.bed_number}`} width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line y2="40" stroke="#fbbf24" strokeWidth="4" opacity=".3" /></pattern>
             </defs>
             <rect width={length} height={width} fill="#101a29" stroke="#475569" strokeWidth="2" />
-            <rect width={rotated ? length : bed.linear_pull_mm} height={rotated ? bed.linear_pull_mm : width} fill="#172432" />
+            <rect
+              x="0"
+              y={rotated ? width - bed.linear_pull_mm : 0}
+              width={rotated ? length : bed.linear_pull_mm}
+              height={rotated ? bed.linear_pull_mm : width}
+              fill="#172432"
+            />
             <rect width={length} height={width} fill={`url(#grid-${bed.bed_number})`} />
             {bed.remnants.map((remnant) => {
-              const p = orient(remnant);
+              const p = displayFromBottomLeft(remnant);
               const rLabelSize = Math.max(font * 0.65, Math.min(font, p.drop / 4, p.width / 3));
               const canFitDimensions = p.drop >= font * 1.8 && p.width >= font * 1.6;
               return (
@@ -107,7 +119,7 @@ function CuttingWorkspace({ bed, rotated, onSavePlt, onSaveDxf }) {
               );
             })}
             {bed.cuts.map((cut, index) => {
-              const p = orient({ x: cut.x_pos_mm, y: cut.y_pos_mm, drop: cut.drop, width: cut.width });
+              const p = displayFromBottomLeft({ x: cut.x_pos_mm, y: cut.y_pos_mm, drop: cut.drop, width: cut.width });
               const color = palette[index % palette.length];
               const labelSize = Math.min(font, p.drop / 8, p.width / 4);
               return <g key={cut.id} role="button" tabIndex="0" className="cursor-pointer" onClick={() => setSelected(index)} onKeyDown={(event) => { if (event.key === 'Enter') setSelected(index); }}>
@@ -116,7 +128,13 @@ function CuttingWorkspace({ bed, rotated, onSavePlt, onSaveDxf }) {
                 <text x={p.x + p.drop / 2} y={p.y + p.width / 2 + labelSize * 1.4} textAnchor="middle" fill={color} fontSize={labelSize * 0.8}>{mm(cut.width)} × {mm(cut.drop)}</text>
               </g>;
             })}
-            <line x1={rotated ? 0 : bed.linear_pull_mm} y1={rotated ? bed.linear_pull_mm : 0} x2={rotated ? length : bed.linear_pull_mm} y2={rotated ? bed.linear_pull_mm : width} stroke="#fb7185" strokeWidth="5" strokeDasharray="20 12" />
+            <line x1={rotated ? 0 : bed.linear_pull_mm} y1={rotated ? width - bed.linear_pull_mm : 0} x2={rotated ? length : bed.linear_pull_mm} y2={rotated ? width - bed.linear_pull_mm : width} stroke="#fb7185" strokeWidth="5" strokeDasharray="20 12" />
+            <g aria-label="Machine origin at bottom-left">
+              <circle cx={originInset} cy={width - originInset} r={originInset * 0.55} fill="#ef4444" stroke="#fff" strokeWidth={Math.max(2, font * 0.04)} />
+              <line x1={originInset} y1={width - originInset} x2={originInset + originAxisLength} y2={width - originInset} stroke="#ef4444" strokeWidth={Math.max(4, font * 0.07)} />
+              <line x1={originInset} y1={width - originInset} x2={originInset} y2={width - originInset - originAxisLength} stroke="#ef4444" strokeWidth={Math.max(4, font * 0.07)} />
+              <text x={originInset + font * 0.35} y={width - originInset - font * 0.28} fill="#fff" stroke="#0f172a" strokeWidth={Math.max(2, font * 0.05)} paintOrder="stroke fill" fontSize={font * 0.62} fontWeight="800">0,0</text>
+            </g>
           </svg>
         </div>
         <aside className="grid border-t border-slate-700 bg-slate-900/80 md:grid-cols-3">
