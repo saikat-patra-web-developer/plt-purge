@@ -44,6 +44,23 @@ test('side pockets are filled without increasing the pull', () => {
   assert.equal(plan.waste_area_m2, 0);
 });
 
+test('Xiao sample uses the lower-pull grouping across multiple beds', () => {
+  const plan = optimizeBedRuns([
+    { id: 1, location: 'Window 1', width: 1128, drop: 1250 },
+    { id: 2, location: 'Window 2', width: 730, drop: 2250 },
+    { id: 3, location: 'Window 3', width: 1961, drop: 2250 },
+    { id: 4, location: 'Window 4', width: 1729, drop: 750 },
+  ], 3000, 3000);
+
+  validate(plan, 4);
+  assert.equal(plan.bed_runs.length, 2);
+  assert.equal(plan.total_linear_mm, 3500);
+  assert.deepEqual(
+    plan.bed_runs.map((bed) => bed.linear_pull_mm).sort((a, b) => a - b),
+    [1250, 2250],
+  );
+});
+
 test('PLT preserves QMB X=drop and Y=width coordinates at 40 units/mm', () => {
   const content = generateBedPlt({ cuts: [{ width: 900, drop: 980, x_pos_mm: 990, y_pos_mm: 1940 }] });
   assert.ok(content.includes('PU39600 77600;'));

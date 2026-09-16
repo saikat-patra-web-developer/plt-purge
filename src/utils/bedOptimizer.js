@@ -374,9 +374,14 @@ const maxRectsOrders = [
   (a, b) => b.drop - a.drop || b.width - a.width,
   (a, b) => b.width - a.width || b.drop - a.drop,
   (a, b) => Math.max(b.drop, b.width) - Math.max(a.drop, a.width),
+  // Starting with short pieces can create a low-drop, full-width bed. Without
+  // these orders the descending-only search may fill a pocket after a long
+  // piece and increase the combined pull across all bed runs.
+  (a, b) => a.drop - b.drop || b.width - a.width,
+  (a, b) => (a.drop * a.width) - (b.drop * b.width),
 ];
 
-function buildMaxRectsPlan(cuts, rollWidthMm, maxBedDropMm, orderIndex, scoreByArea) {
+function buildMaxRectsPlan(cuts, rollWidthMm, maxBedDropMm, orderIndex, scoreByArea, preferredOptimizerIds = []) {
   const finalRollWidth = Number(rollWidthMm) > 0 ? Number(rollWidthMm) : 3000;
   const finalMaxBedDrop = Number(maxBedDropMm) > 0 ? Number(maxBedDropMm) : 3200;
   let remaining = (cuts || [])
@@ -399,12 +404,27 @@ function buildMaxRectsPlan(cuts, rollWidthMm, maxBedDropMm, orderIndex, scoreByA
 
   while (remaining.length > 0) {
     const ordered = [...remaining].sort(order);
+    const preferredRank = new Map(preferredOptimizerIds.map((id, index) => [id, index]));
+    ordered.sort((a, b) => {
+      const aRank = preferredRank.get(a._optimizerId);
+      const bRank = preferredRank.get(b._optimizerId);
+      if (aRank === undefined && bRank === undefined) return 0;
+      if (aRank === undefined) return 1;
+      if (bRank === undefined) return -1;
+      return aRank - bRank;
+    });
     let freeRectangles = [{ x: 0, y: 0, width: finalMaxBedDrop, height: finalRollWidth }];
     const placed = [];
     let usedDrop = 0;
     let usedWidth = 0;
 
     ordered.forEach((cut) => {
+      if (
+        bedRuns.length === 0 &&
+        preferredOptimizerIds.length > 0 &&
+        !preferredRank.has(cut._optimizerId) &&
+        preferredOptimizerIds.every((id) => placed.some((item) => item._optimizerId === id))
+      ) return;
       let best = null;
       freeRectangles.forEach((free) => {
         if (cut.drop > free.width || cut.width > free.height) return;
@@ -532,6 +552,27 @@ export function optimizeFabricRollCutting(cuts, rollWidthMm = 3000, maxBedDropMm
       if (plan) candidates.push(plan);
     });
   });
+  // A globally efficient multi-bed plan can depend on which piece anchors the
+  // first bed. Evaluate each anchor for normal-sized queues so a locally useful
+  // pocket fill cannot force a longer total pull across later beds.
+  if (validCuts.length <= 12) {
+    validCuts.forEach((_, firstOptimizerId) => {
+      validCuts.forEach((__, secondOptimizerId) => {
+        if (secondOptimizerId === firstOptimizerId) return;
+        [false, true].forEach((scoreByArea) => {
+          const plan = buildMaxRectsPlan(
+            validCuts,
+            rollWidthMm,
+            maxBedDropMm,
+            0,
+            scoreByArea,
+            [firstOptimizerId, secondOptimizerId],
+          );
+          if (plan) candidates.push(plan);
+        });
+      });
+    });
+  }
 
   const result = candidates.reduce((best, plan) => {
     if (plan.total_linear_mm !== best.total_linear_mm) {
