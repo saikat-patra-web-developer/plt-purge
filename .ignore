@@ -1,0 +1,5 @@
+# Prevent search tools, indexers, and agents from scanning these directories
+node_modules/
+dist/
+dist-ssr/
+.git/
