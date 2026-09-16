@@ -38,6 +38,78 @@ const computeNextWindowNumber = (rowList) => {
   return maxNum + 1;
 };
 
+function EditableLocation({ value, onChange, className = 'px-3 py-1.5' }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleStartEdit = (e) => {
+    e.stopPropagation();
+    setDraft(value);
+    setIsEditing(true);
+  };
+
+  const commit = () => {
+    setIsEditing(false);
+    const trimmed = draft.trim();
+    if (trimmed && trimmed !== value) {
+      onChange(trimmed);
+    }
+  };
+
+  const cancel = () => {
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return (
+      <input
+        ref={inputRef}
+        type="text"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            commit();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cancel();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-[124px] rounded-[6px] border border-blue-400 bg-white px-2 py-1 text-xs font-bold text-[#1967d2] shadow-xs outline-none ring-2 ring-blue-500/20"
+      />
+    );
+  }
+
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      onClick={handleStartEdit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleStartEdit(e);
+        }
+      }}
+      className={`inline-flex cursor-pointer items-center rounded-[6px] bg-blue-50 ${className} text-xs font-bold text-[#1967d2] transition-colors hover:bg-blue-100 hover:text-blue-800`}
+      title="Click to edit location"
+    >
+      {value}
+    </span>
+  );
+}
+
 export function GeneratorHome() {
   const [initial] = useState(() => loadSavedState());
   const [rows, setRows] = useState(() => {
@@ -224,7 +296,11 @@ export function GeneratorHome() {
                   <div className="mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-[11px] font-black text-blue-700">{index + 1}</span>
-                      <span className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-bold text-[#1967d2]">{row.location}</span>
+                      <EditableLocation
+                        value={row.location}
+                        onChange={(newLocation) => handleUpdateRow(row.id, 'location', newLocation)}
+                        className="px-2.5 py-1"
+                      />
                     </div>
                     <button type="button" onClick={() => handleDeleteRow(row.id)} className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 cursor-pointer" aria-label={`Delete ${row.location}`}>
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
@@ -275,9 +351,11 @@ export function GeneratorHome() {
 
                         {/* Window Location */}
                         <td className="py-3 px-3">
-                          <span className="inline-flex items-center rounded-[6px] bg-blue-50 px-3 py-1.5 text-xs font-bold text-[#1967d2]">
-                            {row.location}
-                          </span>
+                          <EditableLocation
+                            value={row.location}
+                            onChange={(newLocation) => handleUpdateRow(row.id, 'location', newLocation)}
+                            className="px-3 py-1.5"
+                          />
                         </td>
 
                         {/* Width */}
