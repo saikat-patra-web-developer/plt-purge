@@ -2,8 +2,12 @@ export function HowItWorks() {
   const steps = [
     {
       num: 1,
-      title: 'Enter Measurements',
-      description: 'Input your blind details',
+      title: 'Queue Window Sizes',
+      description: (
+        <>
+          Enter width &amp; drop in millimetres.<br />Custom location tags keep cuts organized.
+        </>
+      ),
       icon: (
         <svg className="w-[20px] h-[20px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
@@ -12,10 +16,10 @@ export function HowItWorks() {
     },
     {
       num: 2,
-      title: 'Configure Options',
+      title: 'Configure Bed Limits',
       description: (
         <>
-          Select material, cutting<br />settings and preferences
+          Set maximum bed drop, roll width,<br />and your table&apos;s coordinate axis.
         </>
       ),
       icon: (
@@ -27,10 +31,10 @@ export function HowItWorks() {
     },
     {
       num: 3,
-      title: 'Generate PLT File',
+      title: 'Algorithmic Nesting',
       description: (
         <>
-          Get a machine-ready file<br />instantly
+          Purge calculates lowest linear pull<br />while locking fabric grain alignment.
         </>
       ),
       icon: (
@@ -47,7 +51,7 @@ export function HowItWorks() {
       title: 'Download & Cut',
       description: (
         <>
-          Send to your cutting<br />machine
+          Export machine-ready PLT or DXF<br />files singly or as a batch ZIP.
         </>
       ),
       icon: (
@@ -65,11 +69,14 @@ export function HowItWorks() {
       <div className="relative z-20 mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-10">
         {/* Section Heading */}
         <div className="mb-10 text-center">
-          <h2 className="mb-2 text-[27px] font-extrabold tracking-tight text-white sm:text-[30px]">
-            How It Works
+          <span className="text-xs font-bold uppercase tracking-wider text-sky-400 bg-sky-950/80 border border-sky-800/60 px-3 py-1 rounded-full inline-block mb-2.5">
+            Operator Workflow
+          </span>
+          <h2 className="mb-2 text-[27px] font-extrabold tracking-tight text-white sm:text-[32px]">
+            From Measurement Sheet to Cutting Table
           </h2>
-          <p className="text-[13px] sm:text-[13.5px] text-[#8fa0b5]">
-            Get your PLT file in just a few simple steps.
+          <p className="mx-auto max-w-[560px] text-[13.5px] sm:text-[14.5px] text-[#8fa0b5]">
+            Generate ready-to-run vector cut files in under two minutes without opening AutoCAD.
           </p>
         </div>
 

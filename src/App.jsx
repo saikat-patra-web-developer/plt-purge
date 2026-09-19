@@ -5,6 +5,7 @@ import BlindsIndustry from './components/BlindsIndustry';
 import HowItWorks from './components/HowItWorks';
 import GeneratorHome from './components/GeneratorHome';
 import StreamlineCta from './components/StreamlineCta';
+import FaqSection from './components/FaqSection';
 import Footer from './components/Footer';
 import './App.css';
 
@@ -41,7 +42,7 @@ function App() {
         /* /generate route: Displays CNC & CAD Cutting Export workspace with Header & Footer */
         <GeneratorHome />
       ) : (
-        /* / landing route: Full homepage with Hero, Features, How It Works, CTA */
+        /* / landing route: Full homepage with Hero, Features, How It Works, FAQ, CTA */
         <main className="flex-1">
           {/* Hero Section */}
           <Hero onGenerateClick={() => navigate('/generate')} />
@@ -52,7 +53,10 @@ function App() {
           {/* How It Works */}
           <HowItWorks />
 
-          {/* Ready to Streamline Your Production */}
+          {/* Technical Reference & FAQs for Operators and Search Engines */}
+          <FaqSection />
+
+          {/* Production Call-to-Action */}
           <StreamlineCta onGenerateClick={() => navigate('/generate')} />
         </main>
       )}

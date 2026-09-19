@@ -230,10 +230,10 @@ export function GeneratorHome() {
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                CNC &amp; CAD Cutting Export
+                CNC &amp; CAD Cutting Workspace
               </h2>
               <p className="text-xs sm:text-sm text-slate-500">
-                Xiao-compatible cutting workspace
+                Automated flatbed nesting and HPGL PLT / CAD DXF vector export
               </p>
             </div>
           </div>

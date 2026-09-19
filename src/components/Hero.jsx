@@ -14,18 +14,23 @@ export function Hero({ onGenerateClick }) {
       <div className="mx-auto flex w-full max-w-[1280px] items-center px-5 sm:px-6 lg:px-10">
         {/* Left Column: Copy & Feature Highlights & CTAs */}
         <div className="flex w-full max-w-[760px] flex-col">
-          <h1 className="mb-5 text-[36px] font-extrabold leading-[1.1] tracking-[-1.2px] text-slate-900 sm:text-[44px] lg:text-[52px]">
-            PLT File Generator<br />
-            for <span className="text-[#1967d2]">Blinds Manufacturing</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold mb-4 w-fit">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+            <span>Zero Install · Web-Based CNC Nesting Tool</span>
+          </div>
+
+          <h1 className="mb-5 text-[34px] font-extrabold leading-[1.12] tracking-[-1.2px] text-slate-900 sm:text-[44px] lg:text-[50px]">
+            Instant PLT &amp; DXF Cutting Files<br />
+            for <span className="text-[#1967d2]">Window Blinds</span>
           </h1>
 
-          <p className="mb-8 max-w-[560px] text-[15px] font-normal leading-[1.65] text-slate-500 sm:text-[16px]">
-            Convert your blind measurements into precise PLT files, ready for cutting machines. Fast. Accurate. Reliable.
+          <p className="mb-8 max-w-[620px] text-[15px] font-normal leading-[1.65] text-slate-600 sm:text-[16.5px]">
+            Type in your window drops and widths. Purge calculates the tightest nest on your cutting table, locks fabric grain, and exports clean HPGL PLT and CAD DXF files ready for your cutting machine—no manual drafting required.
           </p>
 
           {/* Three Feature Pillars */}
-          <div className="mb-9 grid max-w-[720px] grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
-            {/* Save Time */}
+          <div className="mb-9 grid max-w-[760px] grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+            {/* Minimum Fabric Pull */}
             <div className="flex items-start gap-2.5">
               <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -33,12 +38,12 @@ export function Hero({ onGenerateClick }) {
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] font-bold text-slate-800 leading-tight">Save Time</span>
-                <span className="text-[11.5px] text-slate-400 mt-0.5">Generate files in seconds</span>
+                <span className="text-[13px] font-bold text-slate-800 leading-tight">Lowest Roll Pull</span>
+                <span className="text-[11.5px] text-slate-500 mt-0.5">Automatic nesting groups cuts across roll width</span>
               </div>
             </div>
 
-            {/* High Accuracy */}
+            {/* Grain Direction Locked */}
             <div className="flex items-start gap-2.5">
               <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -48,12 +53,12 @@ export function Hero({ onGenerateClick }) {
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] font-bold text-slate-800 leading-tight">High Accuracy</span>
-                <span className="text-[11.5px] text-slate-400 mt-0.5">Reduce errors</span>
+                <span className="text-[13px] font-bold text-slate-800 leading-tight">Grain Direction Locked</span>
+                <span className="text-[11.5px] text-slate-500 mt-0.5">Warp &amp; weft stay true so fabrics never twist</span>
               </div>
             </div>
 
-            {/* Works with Major Cutting Machines */}
+            {/* Flatbed Cutting Tables */}
             <div className="flex items-start gap-2.5">
               <div className="w-8 h-8 rounded-full bg-sky-50 text-[#1967d2] flex items-center justify-center shrink-0">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -62,24 +67,27 @@ export function Hero({ onGenerateClick }) {
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] font-bold text-slate-800 leading-tight">Works with Major Cutting Machines</span>
-                <span className="text-[11.5px] text-slate-400 mt-0.5">Compatible &amp; ready to use</span>
+                <span className="text-[13px] font-bold text-slate-800 leading-tight">Aeronaut, Eastman &amp; Matic</span>
+                <span className="text-[11.5px] text-slate-500 mt-0.5">Native 40 units/mm HPGL &amp; R12 DXF</span>
               </div>
             </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="flex items-center">
+          {/* CTA Button & Highlights */}
+          <div className="flex flex-wrap items-center gap-4">
             <button 
               type="button" 
-              className="inline-flex items-center gap-2 bg-[#1967d2] hover:bg-[#1558b8] text-white px-6 py-2.5 rounded-[6px] text-[14.5px] font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[#1967d2] hover:bg-[#1558b8] text-white px-6 py-3 rounded-[6px] text-[15px] font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               onClick={handleClick}
             >
-              <span>Generate PLT</span>
+              <span>Open Cutting Workspace</span>
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
+            <span className="text-xs font-medium text-slate-500">
+              No account required · Instant batch ZIP download
+            </span>
           </div>
         </div>
 
